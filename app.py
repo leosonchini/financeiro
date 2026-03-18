@@ -278,6 +278,7 @@ def pagar_despesa_variavel(id):
 @app.route('/despesas-variaveis/excluir/<int:id>', methods=['POST'])
 def excluir_despesa_variavel(id):
     despesa = DespesaVariavel.query.get_or_404(id)
+    LancamentoDespesaVariavel.query.filter_by(despesa_id=id).delete()
     db.session.delete(despesa)
     db.session.commit()
     return redirect(url_for('despesas_variaveis'))
