@@ -515,6 +515,13 @@ def editar_cor_despesa_variavel(id):
     db.session.commit()
     return redirect(url_for('despesas_variaveis'))
 
+@app.route('/despesas-variaveis/editar/<int:id>', methods=['POST'])
+def editar_despesa_variavel(id):
+    despesa = DespesaVariavel.query.get_or_404(id)
+    despesa.descricao = request.form['descricao']
+    db.session.commit()
+    return redirect(url_for('despesas_variaveis'))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

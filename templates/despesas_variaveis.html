@@ -109,6 +109,10 @@
                 </td>
                 <td style="text-align: center;">
                     <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                        <button onclick="abrirEdicaoNome({{ despesa.id }}, '{{ despesa.descricao }}')"
+                         style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                Editar
+                            </button>
                         <button onclick="abrirEdicaoCor({{ despesa.id }}, '{{ despesa.descricao }}')"
                             style="background: #f3e8fb; color: #6a1a9a; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
                             Cor
@@ -187,6 +191,7 @@
 </div>
 
 <script>
+<script>
 function abrirEdicaoCor(id, nome) {
     document.getElementById('modal-cor-nome').textContent = nome;
     document.getElementById('form-cor').action = '/despesas-variaveis/cor/' + id;
@@ -194,6 +199,14 @@ function abrirEdicaoCor(id, nome) {
 }
 function fecharModalCor() {
     document.getElementById('modal-cor').style.display = 'none';
+}
+function abrirEdicaoNome(id, nome) {
+    document.getElementById('edit-nome').value = nome;
+    document.getElementById('form-nome').action = '/despesas-variaveis/editar/' + id;
+    document.getElementById('modal-nome').style.display = 'flex';
+}
+function fecharModalNome() {
+    document.getElementById('modal-nome').style.display = 'none';
 }
 document.querySelectorAll('.bolinha-modal').forEach(function(bolinha) {
     bolinha.parentElement.querySelector('input').addEventListener('change', function() {
@@ -218,4 +231,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<!-- Modal edição nome -->
+<div id="modal-nome" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; padding: 28px; width: 400px;">
+        <p style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Editar nome</p>
+        <form method="POST" id="form-nome">
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; color: #888;">Nome</label>
+                <input type="text" name="descricao" id="edit-nome" required
+                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="fecharModalNome()"
+                    style="padding: 8px 18px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
