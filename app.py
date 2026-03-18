@@ -12,7 +12,8 @@ app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui'
 
 db.init_app(app)
 
-with app.app_context():
+@app.before_request
+def criar_tabelas():
     db.create_all()
 
 
