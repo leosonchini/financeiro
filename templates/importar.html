@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="cabecalho">
+    <h2>Importar planilha Excel</h2>
+    <p>Migre seus dados do Excel para o sistema de uma só vez</p>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">O que será importado</p>
+    <p style="font-size: 13px; color: #888; margin-bottom: 20px;">A importação lê sua planilha e cadastra automaticamente:</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+        <div style="background: #e6f4ee; border-radius: 8px; padding: 14px 16px;">
+            <p style="font-size: 13px; font-weight: 600; color: #2e7d52; margin-bottom: 4px;">Aba RECEITAS</p>
+            <p style="font-size: 13px; color: #2e7d52;">Clientes com nome, valor e dia de vencimento</p>
+        </div>
+        <div style="background: #fce8e8; border-radius: 8px; padding: 14px 16px;">
+            <p style="font-size: 13px; font-weight: 600; color: #b03030; margin-bottom: 4px;">Aba DESPESAS</p>
+            <p style="font-size: 13px; color: #b03030;">Despesas variáveis com histórico de valores por mês</p>
+        </div>
+    </div>
+    <form method="POST" enctype="multipart/form-data" style="display: flex; gap: 12px; align-items: flex-end;">
+        <div style="flex: 1;">
+            <label style="font-size: 13px; color: #888; display: block; margin-bottom: 6px;">Selecione o arquivo .xlsx</label>
+            <input type="file" name="arquivo" accept=".xlsx" required
+                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="height: 40px; white-space: nowrap;">
+            Importar agora
+        </button>
+    </form>
+</div>
+
+{% if resultado %}
+<div class="card" style="border-left: 4px solid {{ '#2e7d52' if not resultado.erros else '#f0a500' }};">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Resultado da importação</p>
+    <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+        <div style="background: #e6f4ee; border-radius: 8px; padding: 12px 20px; text-align: center;">
+            <p style="font-size: 22px; font-weight: 600; color: #2e7d52;">{{ resultado.clientes }}</p>
+            <p style="font-size: 12px; color: #2e7d52;">clientes importados</p>
+        </div>
+        <div style="background: #fce8e8; border-radius: 8px; padding: 12px 20px; text-align: center;">
+            <p style="font-size: 22px; font-weight: 600; color: #b03030;">{{ resultado.despesas }}</p>
+            <p style="font-size: 12px; color: #b03030;">despesas importadas</p>
+        </div>
+    </div>
+    {% if resultado.erros %}
+    <p style="font-size: 13px; font-weight: 600; color: #8a5a00; margin-bottom: 8px;">Avisos:</p>
+    {% for erro in resultado.erros %}
+    <p style="font-size: 13px; color: #8a5a00; margin-bottom: 4px;">— {{ erro }}</p>
+    {% endfor %}
+    {% else %}
+    <p style="font-size: 14px; color: #2e7d52; font-weight: 500;">✔ Importação concluída sem erros!</p>
+    {% endif %}
+    <div style="margin-top: 16px; display: flex; gap: 12px;">
+        <a href="/clientes" class="btn btn-primary">Ver clientes</a>
+        <a href="/despesas-variaveis" class="btn" style="background: #fce8e8; color: #b03030;">Ver despesas</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

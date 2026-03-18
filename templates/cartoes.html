@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="cabecalho">
+    <h2>Cartões de Crédito</h2>
+    <p>Gerencie seus cartões e escolha uma cor para identificar cada um</p>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Novo cartão</p>
+    <form method="POST" action="/cartoes/novo" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2;">
+            <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Nome do cartão</label>
+            <input type="text" name="nome" placeholder="Ex: Nubank, Bradesco, Inter..." required
+                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        </div>
+        <div>
+            <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Cor</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                {% set cores = [
+                    ('#fce8e8', '#b03030', 'Vermelho'),
+                    ('#e8f0fb', '#1a56a0', 'Azul'),
+                    ('#e6f4ee', '#2e7d52', 'Verde'),
+                    ('#fff8e6', '#8a5a00', 'Amarelo'),
+                    ('#f3e8fb', '#6a1a9a', 'Roxo'),
+                    ('#fce8f3', '#a0185a', 'Rosa'),
+                    ('#e8f8fb', '#0a6a7a', 'Ciano'),
+                    ('#f1efe8', '#5f5e5a', 'Cinza'),
+                    ('#ffe8d6', '#8a3a00', 'Laranja'),
+                    ('#e8fbe8', '#1a6a1a', 'Verde escuro')
+                ] %}
+                {% for bg, texto, nome_cor in cores %}
+                <label style="cursor: pointer;" title="{{ nome_cor }}">
+                    <input type="radio" name="cor" value="{{ bg }}" style="display: none;"
+                        {{ 'checked' if loop.first }}>
+                    <span class="bolinha-cor" style="display: inline-block; width: 28px; height: 28px;
+                        border-radius: 50%; background: {{ bg }}; border: 2px solid {{ texto }};
+                        transition: transform 0.1s;"
+                        onmouseover="this.style.transform='scale(1.2)'"
+                        onmouseout="this.style.transform='scale(1)'">
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="height: 38px;">+ Adicionar</button>
+    </form>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Seus cartões</p>
+    {% if cartoes %}
+    <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+        {% for cartao in cartoes %}
+        {% set cores_map = {
+            '#fce8e8': '#b03030',
+            '#e8f0fb': '#1a56a0',
+            '#e6f4ee': '#2e7d52',
+            '#fff8e6': '#8a5a00',
+            '#f3e8fb': '#6a1a9a',
+            '#fce8f3': '#a0185a',
+            '#e8f8fb': '#0a6a7a',
+            '#f1efe8': '#5f5e5a',
+            '#ffe8d6': '#8a3a00',
+            '#e8fbe8': '#1a6a1a'
+        } %}
+        {% set cor_texto = cores_map.get(cartao.cor, '#1a1a2e') %}
+        <div style="background: {{ cartao.cor }}; border: 1.5px solid {{ cor_texto }};
+            border-radius: 12px; padding: 16px 20px; min-width: 180px;
+            display: flex; flex-direction: column; gap: 12px;">
+            <p style="font-weight: 600; font-size: 15px; color: {{ cor_texto }};">{{ cartao.nome }}</p>
+            <form method="POST" action="/cartoes/excluir/{{ cartao.id }}"
+                onsubmit="return confirm('Excluir cartão {{ cartao.nome }}?')">
+                <button type="submit"
+                    style="background: none; border: 1px solid {{ cor_texto }}; border-radius: 6px;
+                    padding: 4px 10px; font-size: 12px; color: {{ cor_texto }}; cursor: pointer;">
+                    Excluir
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color: #888; font-size: 14px;">Nenhum cartão cadastrado ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

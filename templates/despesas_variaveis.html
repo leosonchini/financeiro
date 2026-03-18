@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="cabecalho">
+    <h2>Despesas Variáveis</h2>
+    <p>Contas que existem todo mês mas com valor diferente — {{ mes }}/{{ ano }}</p>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Nova despesa variável</p>
+    <form method="POST" action="/despesas-variaveis/nova" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2;">
+            <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Água, Luz, Nubank, Inter..." required
+                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        </div>
+        <div>
+            <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Cor</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                {% set cores = [
+                    ('#f1efe8', '#5f5e5a', 'Cinza'),
+                    ('#fce8e8', '#b03030', 'Vermelho'),
+                    ('#e8f0fb', '#1a56a0', 'Azul'),
+                    ('#e6f4ee', '#2e7d52', 'Verde'),
+                    ('#fff8e6', '#8a5a00', 'Amarelo'),
+                    ('#f3e8fb', '#6a1a9a', 'Roxo'),
+                    ('#fce8f3', '#a0185a', 'Rosa'),
+                    ('#e8f8fb', '#0a6a7a', 'Ciano'),
+                    ('#ffe8d6', '#8a3a00', 'Laranja'),
+                    ('#e8fbe8', '#1a6a1a', 'Verde escuro')
+                ] %}
+                {% for bg, texto, nome_cor in cores %}
+                <label style="cursor: pointer;" title="{{ nome_cor }}">
+                    <input type="radio" name="cor" value="{{ bg }}" style="display: none;"
+                        {{ 'checked' if loop.first }}>
+                    <span style="display: inline-block; width: 28px; height: 28px;
+                        border-radius: 50%; background: {{ bg }}; border: 2px solid {{ texto }};
+                        transition: transform 0.1s;"
+                        onmouseover="this.style.transform='scale(1.2)'"
+                        onmouseout="this.style.transform='scale(1)'">
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="height: 38px;">+ Adicionar</button>
+    </form>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lançamentos do mês</p>
+    {% if despesas %}
+    <table>
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Valor do mês</th>
+                <th style="text-align: center;">Pagamento</th>
+                <th style="text-align: center;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set cores_map = {
+                '#f1efe8': '#5f5e5a',
+                '#fce8e8': '#b03030',
+                '#e8f0fb': '#1a56a0',
+                '#e6f4ee': '#2e7d52',
+                '#fff8e6': '#8a5a00',
+                '#f3e8fb': '#6a1a9a',
+                '#fce8f3': '#a0185a',
+                '#e8f8fb': '#0a6a7a',
+                '#ffe8d6': '#8a3a00',
+                '#e8fbe8': '#1a6a1a'
+            } %}
+            {% for despesa in despesas %}
+            {% set cor_texto = cores_map.get(despesa.cor, '#1a1a2e') %}
+            <tr style="{{ 'background: #f0faf5;' if despesa.lancamento_mes and despesa.lancamento_mes.pago else '' }}">
+                <td>
+                    <span style="display: inline-block; background: {{ despesa.cor }};
+                        color: {{ cor_texto }}; border: 1.5px solid {{ cor_texto }};
+                        border-radius: 8px; padding: 4px 12px; font-weight: 600; font-size: 14px;">
+                        {{ despesa.descricao }}
+                    </span>
+                </td>
+                <td>
+                    {% if despesa.lancamento_mes %}
+                        R$ {{ '%.2f'|format(despesa.lancamento_mes.valor) }}
+                    {% else %}
+                        <span style="color: #aaa; font-size: 13px;">Não lançado</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    {% if despesa.lancamento_mes %}
+                        <form method="POST" action="/despesas-variaveis/pagar/{{ despesa.id }}">
+                            {% if despesa.lancamento_mes.pago %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ✔ Pago — clique para desfazer
+                            </button>
+                            {% else %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ○ Em aberto — clique para marcar como pago
+                            </button>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                        <span style="color: #aaa; font-size: 13px;">Lance o valor primeiro</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                        <button onclick="abrirEdicaoCor({{ despesa.id }}, '{{ despesa.descricao }}')"
+                            style="background: #f3e8fb; color: #6a1a9a; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                            Cor
+                        </button>
+                        <form method="POST" action="/despesas-variaveis/lancar/{{ despesa.id }}"
+                            style="display: flex; gap: 6px; align-items: center;">
+                            <input type="number" name="valor" placeholder="R$ valor" step="0.01" required
+                                style="width: 110px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
+                            <button type="submit"
+                                style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                {{ 'Atualizar' if despesa.lancamento_mes else 'Lançar' }}
+                            </button>
+                        </form>
+                        <form method="POST" action="/despesas-variaveis/excluir/{{ despesa.id }}"
+                            onsubmit="return confirm('Excluir {{ despesa.descricao }}?')">
+                            <button type="submit"
+                                style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                Excluir
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #888; font-size: 14px;">Nenhuma despesa variável cadastrada ainda.</p>
+    {% endif %}
+</div>
+
+<!-- Modal edição cor -->
+<div id="modal-cor" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; padding: 28px; width: 400px;">
+        <p style="font-size: 16px; font-weight: 600; margin-bottom: 6px;">Escolher cor</p>
+        <p id="modal-cor-nome" style="font-size: 13px; color: #888; margin-bottom: 20px;"></p>
+        <form method="POST" id="form-cor">
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Cor</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    {% set cores = [
+                        ('#f1efe8', '#5f5e5a', 'Cinza'),
+                        ('#fce8e8', '#b03030', 'Vermelho'),
+                        ('#e8f0fb', '#1a56a0', 'Azul'),
+                        ('#e6f4ee', '#2e7d52', 'Verde'),
+                        ('#fff8e6', '#8a5a00', 'Amarelo'),
+                        ('#f3e8fb', '#6a1a9a', 'Roxo'),
+                        ('#fce8f3', '#a0185a', 'Rosa'),
+                        ('#e8f8fb', '#0a6a7a', 'Ciano'),
+                        ('#ffe8d6', '#8a3a00', 'Laranja'),
+                        ('#e8fbe8', '#1a6a1a', 'Verde escuro')
+                    ] %}
+                    {% for bg, texto, nome_cor in cores %}
+                    <label style="cursor: pointer;" title="{{ nome_cor }}">
+                        <input type="radio" name="cor" value="{{ bg }}" style="display: none;">
+                        <span class="bolinha-modal" style="display: inline-block; width: 28px; height: 28px;
+                            border-radius: 50%; background: {{ bg }}; border: 2px solid {{ texto }};
+                            transition: transform 0.1s;"
+                            onmouseover="this.style.transform='scale(1.2)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="fecharModalCor()"
+                    style="padding: 8px 18px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirEdicaoCor(id, nome) {
+    document.getElementById('modal-cor-nome').textContent = nome;
+    document.getElementById('form-cor').action = '/despesas-variaveis/cor/' + id;
+    document.getElementById('modal-cor').style.display = 'flex';
+}
+function fecharModalCor() {
+    document.getElementById('modal-cor').style.display = 'none';
+}
+document.querySelectorAll('.bolinha-modal').forEach(function(bolinha) {
+    bolinha.parentElement.querySelector('input').addEventListener('change', function() {
+        document.querySelectorAll('.bolinha-modal').forEach(function(b) {
+            b.innerHTML = '';
+        });
+        bolinha.innerHTML = '<span style="font-size:16px; font-weight:bold; line-height:28px; display:flex; align-items:center; justify-content:center;">✔</span>';
+    });
+});
+document.querySelectorAll('input[name="cor"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('input[name="cor"]').forEach(function(r) {
+            r.nextElementSibling.innerHTML = '';
+        });
+        this.nextElementSibling.innerHTML = '<span style="font-size:16px; font-weight:bold; line-height:28px; display:flex; align-items:center; justify-content:center;">✔</span>';
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    var checked = document.querySelector('input[name="cor"]:checked');
+    if (checked) {
+        checked.nextElementSibling.innerHTML = '<span style="font-size:16px; font-weight:bold; line-height:28px; display:flex; align-items:center; justify-content:center;">✔</span>';
+    }
+});
+</script>
+{% endblock %}

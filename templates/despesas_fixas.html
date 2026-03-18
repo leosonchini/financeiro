@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<div class="cabecalho">
+    <h2>Despesas Fixas</h2>
+    <p>Cadastre uma vez — aparecem todo mês automaticamente</p>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Nova despesa fixa</p>
+    <form method="POST" action="/despesas-fixas/nova" style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <input type="text" name="descricao" placeholder="Ex: Aluguel, Prestação do carro..." required
+            style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <input type="number" name="valor" placeholder="Valor (R$)" required step="0.01"
+            style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <button type="submit" class="btn btn-primary">+ Adicionar</button>
+    </form>
+</div>
+
+<div class="card">
+    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Despesas do mês</p>
+    {% if despesas %}
+    <table>
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th style="text-align: center;">Pagamento do mês</th>
+                <th style="text-align: center;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for despesa in despesas %}
+            <tr style="{{ 'background: #f0faf5;' if despesa.pagamento_mes else '' }}">
+                <td style="font-weight: 500;">{{ despesa.descricao }}</td>
+                <td>R$ {{ '%.2f'|format(despesa.valor) }}</td>
+                <td style="text-align: center;">
+                    <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
+                        {% if despesa.pagamento_mes %}
+                        <button type="submit"
+                            style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            ✔ Pago — clique para desfazer
+                        </button>
+                        {% else %}
+                        <button type="submit"
+                            style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            ○ Em aberto — clique para marcar como pago
+                        </button>
+                        {% endif %}
+                    </form>
+                </td>
+                <td style="text-align: center; display: flex; gap: 8px; justify-content: center;">
+                    <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }})"
+                        style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                        Editar
+                    </button>
+                    <form method="POST" action="/despesas-fixas/desativar/{{ despesa.id }}"
+                        onsubmit="return confirm('Desativar {{ despesa.descricao }}? Ela não aparecerá mais nos próximos meses.')">
+                        <button type="submit"
+                            style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                            Desativar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #888; font-size: 14px;">Nenhuma despesa fixa cadastrada ainda.</p>
+    {% endif %}
+</div>
+
+<!-- Modal de edição -->
+<div id="modal-edicao" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; padding: 28px; width: 400px;">
+        <p style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Editar despesa fixa</p>
+        <form method="POST" id="form-edicao">
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 13px; color: #888;">Descrição</label>
+                <input type="text" name="descricao" id="edit-descricao" required
+                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; color: #888;">Valor (R$)</label>
+                <input type="number" name="valor" id="edit-valor" required step="0.01"
+                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="fecharEdicao()"
+                    style="padding: 8px 18px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirEdicao(id, descricao, valor) {
+    document.getElementById('edit-descricao').value = descricao;
+    document.getElementById('edit-valor').value = valor;
+    document.getElementById('form-edicao').action = '/despesas-fixas/editar/' + id;
+    document.getElementById('modal-edicao').style.display = 'flex';
+}
+function fecharEdicao() {
+    document.getElementById('modal-edicao').style.display = 'none';
+}
+</script>
+{% endblock %}
