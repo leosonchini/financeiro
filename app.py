@@ -12,6 +12,10 @@ app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui'
 
 db.init_app(app)
 
+with app.app_context():
+    db.create_all()
+
+
 MESES = {
     1: 'Janeiro', 2: 'Fevereiro', 3: 'Março',
     4: 'Abril', 5: 'Maio', 6: 'Junho',
