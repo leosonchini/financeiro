@@ -279,6 +279,7 @@ def pagar_despesa_variavel(id):
 def excluir_despesa_variavel(id):
     despesa = DespesaVariavel.query.get_or_404(id)
     LancamentoDespesaVariavel.query.filter_by(despesa_id=id).delete()
+    CompraParcelada.query.filter_by(despesa_variavel_id=id).delete()
     db.session.delete(despesa)
     db.session.commit()
     return redirect(url_for('despesas_variaveis'))
