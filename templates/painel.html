@@ -5,19 +5,18 @@
     <p>Visão geral do mês atual</p>
 </div>
 
-<!-- Cards principais -->
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
     <div class="card" style="border-left: 4px solid #2e7d52;">
         <p style="font-size: 13px; color: #888;">Total de receitas</p>
-        <p style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">R$ {{ '%.2f'|format(total_receitas) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">R$ {{ '%.2f'|format(total_receitas) }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #c0392b;">
         <p style="font-size: 13px; color: #888;">Total de despesas</p>
-        <p style="font-size: 22px; font-weight: 600; color: #c0392b; margin-top: 6px;">R$ {{ '%.2f'|format(total_despesas) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #c0392b; margin-top: 6px;">R$ {{ '%.2f'|format(total_despesas) }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #1a56a0;">
         <p style="font-size: 13px; color: #888;">Saldo previsto</p>
-        <p style="font-size: 22px; font-weight: 600; margin-top: 6px;
+        <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
             color: {{ '#2e7d52' if saldo_previsto >= 0 else '#c0392b' }};">
             R$ {{ '%.2f'|format(saldo_previsto) }}
         </p>
@@ -25,7 +24,7 @@
     </div>
     <div class="card" style="border-left: 4px solid #6a1a9a;">
         <p style="font-size: 13px; color: #888;">Saldo realizado</p>
-        <p style="font-size: 22px; font-weight: 600; margin-top: 6px;
+        <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
             color: {{ '#2e7d52' if saldo_realizado >= 0 else '#c0392b' }};">
             R$ {{ '%.2f'|format(saldo_realizado) }}
         </p>
@@ -33,13 +32,12 @@
     </div>
 </div>
 
-<!-- Progresso do mês -->
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
     <div class="card">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas pagas</p>
         <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span>R$ {{ '%.2f'|format(total_pago) }} pagos</span>
-            <span>R$ {{ '%.2f'|format(total_despesas) }} total</span>
+            <span class="vm">R$ {{ '%.2f'|format(total_pago) }} pagos</span>
+            <span class="vm">R$ {{ '%.2f'|format(total_despesas) }} total</span>
         </div>
         <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
             {% set pct_pago = ((total_pago / total_despesas) * 100)|int if total_despesas > 0 else 0 %}
@@ -50,8 +48,8 @@
     <div class="card">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Receitas recebidas</p>
         <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span>R$ {{ '%.2f'|format(total_recebido) }} recebidos</span>
-            <span>R$ {{ '%.2f'|format(total_receitas) }} total</span>
+            <span class="vm">R$ {{ '%.2f'|format(total_recebido) }} recebidos</span>
+            <span class="vm">R$ {{ '%.2f'|format(total_receitas) }} total</span>
         </div>
         <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
             {% set pct_recebido = ((total_recebido / total_receitas) * 100)|int if total_receitas > 0 else 0 %}
@@ -61,7 +59,6 @@
     </div>
 </div>
 
-<!-- Contas em aberto -->
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">
         Contas em aberto
@@ -72,41 +69,42 @@
         {% endif %}
     </p>
     {% if contas_abertas %}
-    <div class="table-container"><table>
-        <thead>
-            <tr>
-                <th>Descrição</th>
-                <th>Tipo</th>
-                <th>Valor</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for conta in contas_abertas %}
-            <tr>
-                <td style="font-weight: 500;">{{ conta.nome }}</td>
-                <td>
-                    <span class="badge {{ 'badge-vermelho' if conta.tipo == 'Fixa' else 'badge-amarelo' if conta.tipo == 'Variável' else 'badge-verde' }}">
-                        {{ conta.tipo }}
-                    </span>
-                </td>
-                <td style="color: #c0392b; font-weight: 500;">R$ {{ '%.2f'|format(conta.valor) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table></div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conta in contas_abertas %}
+                <tr>
+                    <td style="font-weight: 500;">{{ conta.nome }}</td>
+                    <td>
+                        <span class="badge {{ 'badge-vermelho' if conta.tipo == 'Fixa' else 'badge-amarelo' if conta.tipo == 'Variável' else 'badge-verde' }}">
+                            {{ conta.tipo }}
+                        </span>
+                    </td>
+                    <td class="vm" style="color: #c0392b; font-weight: 500;">R$ {{ '%.2f'|format(conta.valor) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p style="color: #2e7d52; font-size: 14px; font-weight: 500;">✔ Todas as contas do mês estão pagas!</p>
     {% endif %}
 </div>
 
-<!-- Resumo por seção -->
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
     <div class="card">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas fixas</p>
         {% for d in fixas %}
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
             <span style="font-size: 13px;">{{ d.descricao }}</span>
-            <span style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.pagamento_mes else '#c0392b' }};">
+            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.pagamento_mes else '#c0392b' }};">
                 {{ '✔' if d.pagamento_mes else '○' }} R$ {{ '%.2f'|format(d.valor) }}
             </span>
         </div>
@@ -119,7 +117,7 @@
         {% for d in variaveis %}
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
             <span style="font-size: 13px;">{{ d.descricao }}</span>
-            <span style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.lancamento_mes and d.lancamento_mes.pago else '#c0392b' if d.lancamento_mes else '#aaa' }};">
+            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.lancamento_mes and d.lancamento_mes.pago else '#c0392b' if d.lancamento_mes else '#aaa' }};">
                 {% if d.lancamento_mes %}
                     {{ '✔' if d.lancamento_mes.pago else '○' }} R$ {{ '%.2f'|format(d.lancamento_mes.valor) }}
                 {% else %}
@@ -136,7 +134,7 @@
         {% for c in clientes %}
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
             <span style="font-size: 13px;">{{ c.nome }}</span>
-            <span style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if c.pagamento_mes else '#c0392b' }};">
+            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if c.pagamento_mes else '#c0392b' }};">
                 {{ '✔' if c.pagamento_mes else '○' }} R$ {{ '%.2f'|format(c.valor_mensalidade) }}
             </span>
         </div>

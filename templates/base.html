@@ -8,7 +8,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f4f6f8; }
 
-        /* SIDEBAR DESKTOP */
         .sidebar {
             width: 220px; min-height: 100vh; background: #1a1a2e;
             padding: 24px 0; position: fixed; top: 0; left: 0;
@@ -24,7 +23,6 @@
         }
         .sidebar a:hover, .sidebar a.ativo { background: #2a2a4a; color: #fff; }
 
-        /* MÊS DE REFERÊNCIA */
         .mes-ref {
             margin: 0 16px 24px;
             background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
@@ -43,7 +41,6 @@
             background: linear-gradient(90deg, #6a6aff, #aa6aff); border-radius: 2px;
         }
 
-        /* TOPBAR MOBILE */
         .topbar-mobile {
             display: none; background: #1a1a2e; padding: 14px 20px;
             position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -58,14 +55,12 @@
             display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px;
         }
 
-        /* OVERLAY */
         .overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;
         }
         .overlay.ativo { display: block; }
 
-        /* CONTEÚDO */
         .conteudo { margin-left: 220px; padding: 32px; width: calc(100% - 220px); }
         .cabecalho { margin-bottom: 24px; }
         .cabecalho h2 { font-size: 22px; color: #1a1a2e; }
@@ -85,11 +80,11 @@
         .btn-danger { background: #c0392b; color: #fff; }
 
         table { width: 100%; border-collapse: collapse; }
-.table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         th { text-align: left; padding: 10px 12px; font-size: 13px;
              color: #888; border-bottom: 1px solid #eee; }
         td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
         tr:last-child td { border-bottom: none; }
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
         .badge {
             display: inline-block; padding: 3px 10px; border-radius: 20px;
@@ -99,95 +94,108 @@
         .badge-amarelo { background: #fef3e2; color: #8a5a00; }
         .badge-vermelho { background: #fce8e8; color: #b03030; }
 
-        /* RESPONSIVO */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 260px;
-                table { min-width: 500px; }
-            }
+            .sidebar { transform: translateX(-100%); width: 260px; }
             .sidebar.aberto { transform: translateX(0); }
             .topbar-mobile { display: flex; }
-            .conteudo {
-                margin-left: 0; padding: 16px;
-                padding-top: 70px; width: 100%;
-            }
+            .conteudo { margin-left: 0; padding: 16px; padding-top: 70px; width: 100%; }
             .cabecalho h2 { font-size: 18px; }
-            table { font-size: 13px; }
+            table { min-width: 500px; }
             th, td { padding: 8px; }
             .card { padding: 16px; }
-
-            /* Tabelas roláveis no mobile */
-            .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-            /* Grid cards vira coluna única */
-            div[style*="grid-template-columns: repeat(4"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-            div[style*="grid-template-columns: repeat(3"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-            div[style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
+            div[style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+            div[style*="grid-template-columns: repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
+            div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
 
         @media (max-width: 480px) {
-            div[style*="grid-template-columns: repeat(2"] {
-                grid-template-columns: 1fr !important;
-            }
-            div[style*="grid-template-columns: repeat(4"] {
-                grid-template-columns: 1fr !important;
-            }
-            div[style*="grid-template-columns: repeat(3"] {
-                grid-template-columns: 1fr !important;
-            }
+            div[style*="grid-template-columns: repeat(2"] { grid-template-columns: 1fr !important; }
+            div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr !important; }
+            div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Topbar mobile -->
-    <div class="topbar-mobile">
-        <h1>Financeiro</h1>
+<div class="topbar-mobile">
+    <h1>Financeiro</h1>
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <button onclick="toggleValores()"
+            style="background: none; border: none; cursor: pointer; color: #fff; display: flex; align-items: center;">
+            <span class="icone-olho"></span>
+        </button>
         <button class="btn-menu" onclick="toggleMenu()">
             <span></span><span></span><span></span>
         </button>
     </div>
+</div>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+<div class="overlay" id="overlay" onclick="fecharMenu()"></div>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h1>Financeiro</h1>
-        <div class="mes-ref">
-            <p>Mês de referência</p>
-            <p>{{ mes_atual }}</p>
-            <div class="barra"></div>
-        </div>
-        <a href="/" class="{{ 'ativo' if request.path == '/' }}" onclick="fecharMenu()">Painel</a>
-        <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}" onclick="fecharMenu()">Receitas</a>
-        <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}" onclick="fecharMenu()">Clientes</a>
-        <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}" onclick="fecharMenu()">Despesas Fixas</a>
-        <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}" onclick="fecharMenu()">Despesas Variáveis</a>
-        <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}" onclick="fecharMenu()">Parcelas</a>
-        <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">Importar Excel</a>
+<div class="sidebar" id="sidebar">
+    <h1>Financeiro</h1>
+    <div class="mes-ref">
+        <p>Mês de referência</p>
+        <p>{{ mes_atual }}</p>
+        <div class="barra"></div>
     </div>
+    <button onclick="toggleValores()"
+        style="display: flex; align-items: center; gap: 8px; background: none; border: none;
+        cursor: pointer; color: #aaa; font-size: 13px; padding: 10px 24px; width: 100%;
+        border-bottom: 1px solid #2a2a4a; margin-bottom: 8px;">
+        <span class="icone-olho"></span>
+        <span class="texto-olho">Mostrar valores</span>
+    </button>
+    <a href="/" class="{{ 'ativo' if request.path == '/' }}" onclick="fecharMenu()">Painel</a>
+    <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}" onclick="fecharMenu()">Receitas</a>
+    <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}" onclick="fecharMenu()">Clientes</a>
+    <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}" onclick="fecharMenu()">Despesas Fixas</a>
+    <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}" onclick="fecharMenu()">Despesas Variáveis</a>
+    <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}" onclick="fecharMenu()">Parcelas</a>
+    <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">Importar Excel</a>
+</div>
 
-    <div class="conteudo">
-        {% block conteudo %}{% endblock %}
-    </div>
+<div class="conteudo">
+    {% block conteudo %}{% endblock %}
+</div>
 
-    <script>
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('aberto');
-        document.getElementById('overlay').classList.toggle('ativo');
-    }
-    function fecharMenu() {
-        document.getElementById('sidebar').classList.remove('aberto');
-        document.getElementById('overlay').classList.remove('ativo');
-    }
-    </script>
+<script>
+var valoresVisiveis = localStorage.getItem('valoresVisiveis') === 'true';
+
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('aberto');
+    document.getElementById('overlay').classList.toggle('ativo');
+}
+function fecharMenu() {
+    document.getElementById('sidebar').classList.remove('aberto');
+    document.getElementById('overlay').classList.remove('ativo');
+}
+function olhoAberto() {
+    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+function olhoFechado() {
+    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+}
+function aplicarEstado() {
+    document.querySelectorAll('.vm').forEach(function(el) {
+        el.style.filter = valoresVisiveis ? '' : 'blur(6px)';
+        el.style.userSelect = valoresVisiveis ? '' : 'none';
+    });
+    document.querySelectorAll('.icone-olho').forEach(function(el) {
+        el.innerHTML = valoresVisiveis ? olhoAberto() : olhoFechado();
+    });
+    document.querySelectorAll('.texto-olho').forEach(function(el) {
+        el.textContent = valoresVisiveis ? 'Ocultar valores' : 'Mostrar valores';
+    });
+}
+function toggleValores() {
+    valoresVisiveis = !valoresVisiveis;
+    localStorage.setItem('valoresVisiveis', valoresVisiveis);
+    aplicarEstado();
+}
+document.addEventListener('DOMContentLoaded', function() {
+    aplicarEstado();
+});
+</script>
 </body>
 </html>

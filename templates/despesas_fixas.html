@@ -19,52 +19,56 @@
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Despesas do mês</p>
     {% if despesas %}
-    <div class="table-container"><table>
-        <thead>
-            <tr>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th style="text-align: center;">Pagamento do mês</th>
-                <th style="text-align: center;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for despesa in despesas %}
-            <tr style="{{ 'background: #f0faf5;' if despesa.pagamento_mes else '' }}">
-                <td style="font-weight: 500;">{{ despesa.descricao }}</td>
-                <td>R$ {{ '%.2f'|format(despesa.valor) }}</td>
-                <td style="text-align: center;">
-                    <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
-                        {% if despesa.pagamento_mes %}
-                        <button type="submit"
-                            style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            ✔ Pago — clique para desfazer
-                        </button>
-                        {% else %}
-                        <button type="submit"
-                            style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            ○ Em aberto — clique para marcar como pago
-                        </button>
-                        {% endif %}
-                    </form>
-                </td>
-                <td style="text-align: center; display: flex; gap: 8px; justify-content: center;">
-                    <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }})"
-                        style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                        Editar
-                    </button>
-                    <form method="POST" action="/despesas-fixas/desativar/{{ despesa.id }}"
-                        onsubmit="return confirm('Desativar {{ despesa.descricao }}? Ela não aparecerá mais nos próximos meses.')">
-                        <button type="submit"
-                            style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                            Desativar
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table></div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th style="text-align: center;">Pagamento do mês</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for despesa in despesas %}
+                <tr style="{{ 'background: #f0faf5;' if despesa.pagamento_mes else '' }}">
+                    <td style="font-weight: 500;">{{ despesa.descricao }}</td>
+                    <td class="vm">R$ {{ '%.2f'|format(despesa.valor) }}</td>
+                    <td style="text-align: center;">
+                        <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
+                            {% if despesa.pagamento_mes %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ✔ Pago — clique para desfazer
+                            </button>
+                            {% else %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ○ Em aberto — clique para marcar como pago
+                            </button>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }})"
+                                style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                Editar
+                            </button>
+                            <form method="POST" action="/despesas-fixas/desativar/{{ despesa.id }}"
+                                onsubmit="return confirm('Desativar {{ despesa.descricao }}?')">
+                                <button type="submit"
+                                    style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                    Desativar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p style="color: #888; font-size: 14px;">Nenhuma despesa fixa cadastrada ainda.</p>
     {% endif %}

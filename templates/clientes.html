@@ -21,51 +21,53 @@
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lista de clientes</p>
     {% if clientes %}
-    <div class="table-container"><table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Mensalidade</th>
-                <th>Vencimento</th>
-                <th>Status</th>
-                <th style="text-align: center;">Pagamento do mês</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cliente in clientes %}
-            <tr style="{{ 'background: #f0faf5;' if cliente.pagamento_mes else '' }}">
-                <td style="font-weight: 500;">{{ cliente.nome }}</td>
-                <td>R$ {{ '%.2f'|format(cliente.valor_mensalidade) }}</td>
-                <td>Dia {{ cliente.dia_vencimento }}</td>
-                <td>
-                    <form method="POST" action="/clientes/status/{{ cliente.id }}" style="display: inline;">
-                        <select name="status" onchange="this.form.submit()"
-                            style="border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; font-size: 13px;">
-                            <option value="ativo" {{ 'selected' if cliente.status == 'ativo' }}>Ativo</option>
-                            <option value="pausado" {{ 'selected' if cliente.status == 'pausado' }}>Pausado</option>
-                            <option value="cancelado" {{ 'selected' if cliente.status == 'cancelado' }}>Cancelado</option>
-                        </select>
-                    </form>
-                </td>
-                <td style="text-align: center;">
-                    <form method="POST" action="/clientes/pagar/{{ cliente.id }}">
-                        {% if cliente.pagamento_mes %}
-                        <button type="submit" title="Clique para desmarcar"
-                            style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            ✔ Pago — clique para desfazer
-                        </button>
-                        {% else %}
-                        <button type="submit" title="Clique para marcar como pago"
-                            style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                            ○ Em aberto — clique para marcar como pago
-                        </button>
-                        {% endif %}
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table></div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Mensalidade</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Pagamento do mês</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr style="{{ 'background: #f0faf5;' if cliente.pagamento_mes else '' }}">
+                    <td style="font-weight: 500;">{{ cliente.nome }}</td>
+                    <td class="vm">R$ {{ '%.2f'|format(cliente.valor_mensalidade) }}</td>
+                    <td>Dia {{ cliente.dia_vencimento }}</td>
+                    <td>
+                        <form method="POST" action="/clientes/status/{{ cliente.id }}" style="display: inline;">
+                            <select name="status" onchange="this.form.submit()"
+                                style="border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; font-size: 13px;">
+                                <option value="ativo" {{ 'selected' if cliente.status == 'ativo' }}>Ativo</option>
+                                <option value="pausado" {{ 'selected' if cliente.status == 'pausado' }}>Pausado</option>
+                                <option value="cancelado" {{ 'selected' if cliente.status == 'cancelado' }}>Cancelado</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td style="text-align: center;">
+                        <form method="POST" action="/clientes/pagar/{{ cliente.id }}">
+                            {% if cliente.pagamento_mes %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ✔ Pago — clique para desfazer
+                            </button>
+                            {% else %}
+                            <button type="submit"
+                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                ○ Em aberto — clique para marcar como pago
+                            </button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p style="color: #888; font-size: 14px;">Nenhum cliente cadastrado ainda.</p>
     {% endif %}

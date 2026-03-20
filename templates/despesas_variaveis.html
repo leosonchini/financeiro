@@ -32,7 +32,7 @@
                 <label style="cursor: pointer;" title="{{ nome_cor }}">
                     <input type="radio" name="cor" value="{{ bg }}" class="radio-nova"
                         style="display: none;" {{ 'checked' if loop.first }}>
-                    <span class="bolinha-nova" data-bg="{{ bg }}" style="display: inline-block; width: 28px; height: 28px;
+                    <span class="bolinha-nova" style="display: inline-block; width: 28px; height: 28px;
                         border-radius: 50%; background: {{ bg }}; border: 2px solid {{ texto }};
                         transition: transform 0.1s;"
                         onmouseover="this.style.transform='scale(1.2)'"
@@ -50,96 +50,98 @@
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lançamentos do mês</p>
     {% if despesas %}
-    <div class="table-container"><table>
-        <thead>
-            <tr>
-                <th>Descrição</th>
-                <th>Valor do mês</th>
-                <th style="text-align: center;">Pagamento</th>
-                <th style="text-align: center;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set cores_map = {
-                '#f1efe8': '#5f5e5a',
-                '#fce8e8': '#b03030',
-                '#e8f0fb': '#1a56a0',
-                '#e6f4ee': '#2e7d52',
-                '#fff8e6': '#8a5a00',
-                '#f3e8fb': '#6a1a9a',
-                '#fce8f3': '#a0185a',
-                '#e8f8fb': '#0a6a7a',
-                '#ffe8d6': '#8a3a00',
-                '#e8fbe8': '#1a6a1a'
-            } %}
-            {% for despesa in despesas %}
-            {% set cor_texto = cores_map.get(despesa.cor, '#1a1a2e') %}
-            <tr style="{{ 'background: #f0faf5;' if despesa.lancamento_mes and despesa.lancamento_mes.pago else '' }}">
-                <td>
-                    <span style="display: inline-block; background: {{ despesa.cor }};
-                        color: {{ cor_texto }}; border: 1.5px solid {{ cor_texto }};
-                        border-radius: 8px; padding: 4px 12px; font-weight: 600; font-size: 14px;">
-                        {{ despesa.descricao }}
-                    </span>
-                </td>
-                <td>
-                    {% if despesa.lancamento_mes %}
-                        R$ {{ '%.2f'|format(despesa.lancamento_mes.valor) }}
-                    {% else %}
-                        <span style="color: #aaa; font-size: 13px;">Não lançado</span>
-                    {% endif %}
-                </td>
-                <td style="text-align: center;">
-                    {% if despesa.lancamento_mes %}
-                        <form method="POST" action="/despesas-variaveis/pagar/{{ despesa.id }}">
-                            {% if despesa.lancamento_mes.pago %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                ✔ Pago — clique para desfazer
-                            </button>
-                            {% else %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                ○ Em aberto — clique para marcar como pago
-                            </button>
-                            {% endif %}
-                        </form>
-                    {% else %}
-                        <span style="color: #aaa; font-size: 13px;">Lance o valor primeiro</span>
-                    {% endif %}
-                </td>
-                <td style="text-align: center;">
-                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-                        <button onclick="abrirEdicaoNome({{ despesa.id }}, '{{ despesa.descricao }}')"
-                            style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                            Editar
-                        </button>
-                        <button onclick="abrirEdicaoCor({{ despesa.id }}, '{{ despesa.descricao }}')"
-                            style="background: #f3e8fb; color: #6a1a9a; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                            Cor
-                        </button>
-                        <form method="POST" action="/despesas-variaveis/lancar/{{ despesa.id }}"
-                            style="display: flex; gap: 6px; align-items: center;">
-                            <input type="number" name="valor" placeholder="R$ valor" step="0.01" required
-                                style="width: 110px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
-                            <button type="submit"
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor do mês</th>
+                    <th style="text-align: center;">Pagamento</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set cores_map = {
+                    '#f1efe8': '#5f5e5a',
+                    '#fce8e8': '#b03030',
+                    '#e8f0fb': '#1a56a0',
+                    '#e6f4ee': '#2e7d52',
+                    '#fff8e6': '#8a5a00',
+                    '#f3e8fb': '#6a1a9a',
+                    '#fce8f3': '#a0185a',
+                    '#e8f8fb': '#0a6a7a',
+                    '#ffe8d6': '#8a3a00',
+                    '#e8fbe8': '#1a6a1a'
+                } %}
+                {% for despesa in despesas %}
+                {% set cor_texto = cores_map.get(despesa.cor, '#1a1a2e') %}
+                <tr style="{{ 'background: #f0faf5;' if despesa.lancamento_mes and despesa.lancamento_mes.pago else '' }}">
+                    <td>
+                        <span style="display: inline-block; background: {{ despesa.cor }};
+                            color: {{ cor_texto }}; border: 1.5px solid {{ cor_texto }};
+                            border-radius: 8px; padding: 4px 12px; font-weight: 600; font-size: 14px;">
+                            {{ despesa.descricao }}
+                        </span>
+                    </td>
+                    <td class="vm">
+                        {% if despesa.lancamento_mes %}
+                            R$ {{ '%.2f'|format(despesa.lancamento_mes.valor) }}
+                        {% else %}
+                            <span style="color: #aaa; font-size: 13px;">Não lançado</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% if despesa.lancamento_mes %}
+                            <form method="POST" action="/despesas-variaveis/pagar/{{ despesa.id }}">
+                                {% if despesa.lancamento_mes.pago %}
+                                <button type="submit"
+                                    style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    ✔ Pago — clique para desfazer
+                                </button>
+                                {% else %}
+                                <button type="submit"
+                                    style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    ○ Em aberto — clique para marcar como pago
+                                </button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <span style="color: #aaa; font-size: 13px;">Lance o valor primeiro</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                            <button onclick="abrirEdicaoNome({{ despesa.id }}, '{{ despesa.descricao }}')"
                                 style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                                {{ 'Atualizar' if despesa.lancamento_mes else 'Lançar' }}
+                                Editar
                             </button>
-                        </form>
-                        <form method="POST" action="/despesas-variaveis/excluir/{{ despesa.id }}"
-                            onsubmit="return confirm('Excluir {{ despesa.descricao }}?')">
-                            <button type="submit"
-                                style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
-                                Excluir
+                            <button onclick="abrirEdicaoCor({{ despesa.id }}, '{{ despesa.descricao }}')"
+                                style="background: #f3e8fb; color: #6a1a9a; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                Cor
                             </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table></div>
+                            <form method="POST" action="/despesas-variaveis/lancar/{{ despesa.id }}"
+                                style="display: flex; gap: 6px; align-items: center;">
+                                <input type="number" name="valor" placeholder="R$ valor" step="0.01" required
+                                    style="width: 110px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
+                                <button type="submit"
+                                    style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                    {{ 'Atualizar' if despesa.lancamento_mes else 'Lançar' }}
+                                </button>
+                            </form>
+                            <form method="POST" action="/despesas-variaveis/excluir/{{ despesa.id }}"
+                                onsubmit="return confirm('Excluir {{ despesa.descricao }}?')">
+                                <button type="submit"
+                                    style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                    Excluir
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <p style="color: #888; font-size: 14px;">Nenhuma despesa variável cadastrada ainda.</p>
     {% endif %}
@@ -245,14 +247,12 @@ function salvarCor() {
     document.getElementById('cor-selecionada').value = selecionado.value;
     form.submit();
 }
-
 document.querySelectorAll('.radio-modal').forEach(function(radio) {
     radio.addEventListener('change', function() {
         document.querySelectorAll('.bolinha-modal').forEach(function(b) { b.innerHTML = ''; });
         this.nextElementSibling.innerHTML = '<span style="font-size:16px;font-weight:bold;line-height:28px;display:flex;align-items:center;justify-content:center;">✔</span>';
     });
 });
-
 document.querySelectorAll('.radio-nova').forEach(function(radio) {
     radio.addEventListener('change', function() {
         document.querySelectorAll('.bolinha-nova').forEach(function(b) { b.innerHTML = ''; });
