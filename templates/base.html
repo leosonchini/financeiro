@@ -6,11 +6,13 @@
     <title>Financeiro</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f8; display: flex; }
+        body { font-family: Arial, sans-serif; background: #f4f6f8; }
 
+        /* SIDEBAR DESKTOP */
         .sidebar {
             width: 220px; min-height: 100vh; background: #1a1a2e;
-            padding: 24px 0; position: fixed;
+            padding: 24px 0; position: fixed; top: 0; left: 0;
+            z-index: 100; transition: transform 0.3s;
         }
         .sidebar h1 {
             color: #fff; font-size: 18px; padding: 0 24px 24px;
@@ -22,7 +24,49 @@
         }
         .sidebar a:hover, .sidebar a.ativo { background: #2a2a4a; color: #fff; }
 
-        .conteudo { margin-left: 220px; padding: 32px; width: 100%; }
+        /* MÊS DE REFERÊNCIA */
+        .mes-ref {
+            margin: 0 16px 24px;
+            background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
+            border-radius: 10px; padding: 14px 16px;
+            border: 1px solid #4a4a8a;
+        }
+        .mes-ref p:first-child {
+            font-size: 10px; color: #8888bb; margin-bottom: 6px;
+            text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+        }
+        .mes-ref p:last-child {
+            font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em;
+        }
+        .mes-ref .barra {
+            margin-top: 8px; height: 3px;
+            background: linear-gradient(90deg, #6a6aff, #aa6aff); border-radius: 2px;
+        }
+
+        /* TOPBAR MOBILE */
+        .topbar-mobile {
+            display: none; background: #1a1a2e; padding: 14px 20px;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            align-items: center; justify-content: space-between;
+        }
+        .topbar-mobile h1 { color: #fff; font-size: 16px; }
+        .btn-menu {
+            background: none; border: none; cursor: pointer;
+            display: flex; flex-direction: column; gap: 5px; padding: 4px;
+        }
+        .btn-menu span {
+            display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px;
+        }
+
+        /* OVERLAY */
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;
+        }
+        .overlay.ativo { display: block; }
+
+        /* CONTEÚDO */
+        .conteudo { margin-left: 220px; padding: 32px; width: calc(100% - 220px); }
         .cabecalho { margin-bottom: 24px; }
         .cabecalho h2 { font-size: 22px; color: #1a1a2e; }
         .cabecalho p { color: #888; font-size: 14px; margin-top: 4px; }
@@ -53,27 +97,95 @@
         .badge-verde { background: #e6f4ee; color: #2e7d52; }
         .badge-amarelo { background: #fef3e2; color: #8a5a00; }
         .badge-vermelho { background: #fce8e8; color: #b03030; }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+            .sidebar.aberto { transform: translateX(0); }
+            .topbar-mobile { display: flex; }
+            .conteudo {
+                margin-left: 0; padding: 16px;
+                padding-top: 70px; width: 100%;
+            }
+            .cabecalho h2 { font-size: 18px; }
+            table { font-size: 13px; }
+            th, td { padding: 8px; }
+            .card { padding: 16px; }
+
+            /* Tabelas roláveis no mobile */
+            .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+            /* Grid cards vira coluna única */
+            div[style*="grid-template-columns: repeat(4"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            div[style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            div[style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: repeat(4"] {
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-    <h1>Financeiro</h1>
-    <div style="margin: 0 16px 20px; background: #2a2a4a; border-radius: 8px; padding: 12px 14px;">
-    <p style="font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Mês de referência</p>
-    <p style="font-size: 16px; font-weight: 700; color: #fff;">
-        {{ mes_atual }}
-    </p>
-</div>
-    <a href="/" class="{{ 'ativo' if request.path == '/' }}">Painel</a>
-    <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}">Receitas</a>
-    <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}">Clientes</a>
-    <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}">Despesas Fixas</a>
-    <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}">Despesas Variáveis</a>
-    <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}">Parcelas</a>
-    <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}">Importar Excel</a>
-</div>
+
+    <!-- Topbar mobile -->
+    <div class="topbar-mobile">
+        <h1>Financeiro</h1>
+        <button class="btn-menu" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h1>Financeiro</h1>
+        <div class="mes-ref">
+            <p>Mês de referência</p>
+            <p>{{ mes_atual }}</p>
+            <div class="barra"></div>
+        </div>
+        <a href="/" class="{{ 'ativo' if request.path == '/' }}" onclick="fecharMenu()">Painel</a>
+        <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}" onclick="fecharMenu()">Receitas</a>
+        <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}" onclick="fecharMenu()">Clientes</a>
+        <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}" onclick="fecharMenu()">Despesas Fixas</a>
+        <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}" onclick="fecharMenu()">Despesas Variáveis</a>
+        <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}" onclick="fecharMenu()">Parcelas</a>
+        <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">Importar Excel</a>
+    </div>
+
     <div class="conteudo">
         {% block conteudo %}{% endblock %}
     </div>
+
+    <script>
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('aberto');
+        document.getElementById('overlay').classList.toggle('ativo');
+    }
+    function fecharMenu() {
+        document.getElementById('sidebar').classList.remove('aberto');
+        document.getElementById('overlay').classList.remove('ativo');
+    }
+    </script>
 </body>
 </html>
