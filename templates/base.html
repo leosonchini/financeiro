@@ -85,6 +85,7 @@
         .btn-danger { background: #c0392b; color: #fff; }
 
         table { width: 100%; border-collapse: collapse; }
+.table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         th { text-align: left; padding: 10px 12px; font-size: 13px;
              color: #888; border-bottom: 1px solid #eee; }
         td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
@@ -103,6 +104,7 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: 260px;
+                table { min-width: 500px; }
             }
             .sidebar.aberto { transform: translateX(0); }
             .topbar-mobile { display: flex; }

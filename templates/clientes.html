@@ -21,7 +21,7 @@
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lista de clientes</p>
     {% if clientes %}
-    <table>
+    <div class="table-container"><table>
         <thead>
             <tr>
                 <th>Nome</th>
@@ -65,7 +65,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table></div>
     {% else %}
     <p style="color: #888; font-size: 14px;">Nenhum cliente cadastrado ainda.</p>
     {% endif %}

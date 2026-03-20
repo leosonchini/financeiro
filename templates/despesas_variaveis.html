@@ -50,7 +50,7 @@
 <div class="card">
     <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lançamentos do mês</p>
     {% if despesas %}
-    <table>
+    <div class="table-container"><table>
         <thead>
             <tr>
                 <th>Descrição</th>
@@ -139,7 +139,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table></div>
     {% else %}
     <p style="color: #888; font-size: 14px;">Nenhuma despesa variável cadastrada ainda.</p>
     {% endif %}

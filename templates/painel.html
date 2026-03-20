@@ -72,7 +72,7 @@
         {% endif %}
     </p>
     {% if contas_abertas %}
-    <table>
+    <div class="table-container"><table>
         <thead>
             <tr>
                 <th>Descrição</th>
@@ -93,7 +93,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table></div>
     {% else %}
     <p style="color: #2e7d52; font-size: 14px; font-weight: 500;">✔ Todas as contas do mês estão pagas!</p>
     {% endif %}
