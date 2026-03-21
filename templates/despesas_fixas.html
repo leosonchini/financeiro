@@ -33,7 +33,7 @@
                 {% for despesa in despesas %}
                 <tr style="{{ 'background: #f0faf5;' if despesa.pagamento_mes else '' }}">
                     <td style="font-weight: 500;">{{ despesa.descricao }}</td>
-                    <td class="vm">R$ {{ '%.2f'|format(despesa.valor) }}</td>
+                    <td class="vm">{{ despesa.valor|moeda }}</td>
                     <td style="text-align: center;">
                         <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
                             {% if despesa.pagamento_mes %}

@@ -8,17 +8,17 @@
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
     <div class="card" style="border-left: 4px solid #2e7d52;">
         <p style="font-size: 13px; color: #888;">Total de receitas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">R$ {{ '%.2f'|format(total_receitas) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">{{ total_receitas|moeda }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #c0392b;">
         <p style="font-size: 13px; color: #888;">Total de despesas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #c0392b; margin-top: 6px;">R$ {{ '%.2f'|format(total_despesas) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #c0392b; margin-top: 6px;">{{ total_despesas|moeda }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #1a56a0;">
         <p style="font-size: 13px; color: #888;">Saldo previsto</p>
         <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
             color: {{ '#2e7d52' if saldo_previsto >= 0 else '#c0392b' }};">
-            R$ {{ '%.2f'|format(saldo_previsto) }}
+            {{ saldo_previsto|moeda }}
         </p>
         <p style="font-size: 11px; color: #888; margin-top: 4px;">Se tudo for pago/recebido</p>
     </div>
@@ -26,7 +26,7 @@
         <p style="font-size: 13px; color: #888;">Saldo realizado</p>
         <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
             color: {{ '#2e7d52' if saldo_realizado >= 0 else '#c0392b' }};">
-            R$ {{ '%.2f'|format(saldo_realizado) }}
+            {{ saldo_realizado|moeda }}
         </p>
         <p style="font-size: 11px; color: #888; margin-top: 4px;">O que já entrou e saiu</p>
     </div>
@@ -36,8 +36,8 @@
     <div class="card">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas pagas</p>
         <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span class="vm">R$ {{ '%.2f'|format(total_pago) }} pagos</span>
-            <span class="vm">R$ {{ '%.2f'|format(total_despesas) }} total</span>
+            <span class="vm">{{ total_pago|moeda }} pagos</span>
+            <span class="vm">{{ total_despesas|moeda }} total</span>
         </div>
         <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
             {% set pct_pago = ((total_pago / total_despesas) * 100)|int if total_despesas > 0 else 0 %}
@@ -48,8 +48,8 @@
     <div class="card">
         <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Receitas recebidas</p>
         <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span class="vm">R$ {{ '%.2f'|format(total_recebido) }} recebidos</span>
-            <span class="vm">R$ {{ '%.2f'|format(total_receitas) }} total</span>
+            <span class="vm">{{ total_recebido|moeda }} recebidos</span>
+            <span class="vm">{{ total_receitas|moeda }} total</span>
         </div>
         <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
             {% set pct_recebido = ((total_recebido / total_receitas) * 100)|int if total_receitas > 0 else 0 %}
@@ -87,7 +87,7 @@
                             {{ conta.tipo }}
                         </span>
                     </td>
-                    <td class="vm" style="color: #c0392b; font-weight: 500;">R$ {{ '%.2f'|format(conta.valor) }}</td>
+                    <td class="vm" style="color: #c0392b; font-weight: 500;">{{ conta.valor|moeda }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -105,7 +105,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
             <span style="font-size: 13px;">{{ d.descricao }}</span>
             <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.pagamento_mes else '#c0392b' }};">
-                {{ '✔' if d.pagamento_mes else '○' }} R$ {{ '%.2f'|format(d.valor) }}
+                {{ '✔' if d.pagamento_mes else '○' }} {{ d.valor|moeda }}
             </span>
         </div>
         {% else %}
@@ -119,7 +119,7 @@
             <span style="font-size: 13px;">{{ d.descricao }}</span>
             <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.lancamento_mes and d.lancamento_mes.pago else '#c0392b' if d.lancamento_mes else '#aaa' }};">
                 {% if d.lancamento_mes %}
-                    {{ '✔' if d.lancamento_mes.pago else '○' }} R$ {{ '%.2f'|format(d.lancamento_mes.valor) }}
+                    {{ '✔' if d.lancamento_mes.pago else '○' }} {{ d.lancamento_mes.valor|moeda }}
                 {% else %}
                     — Não lançado
                 {% endif %}
@@ -135,7 +135,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
             <span style="font-size: 13px;">{{ c.nome }}</span>
             <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if c.pagamento_mes else '#c0392b' }};">
-                {{ '✔' if c.pagamento_mes else '○' }} R$ {{ '%.2f'|format(c.valor_mensalidade) }}
+                {{ '✔' if c.pagamento_mes else '○' }} {{ c.valor_mensalidade|moeda }}
             </span>
         </div>
         {% else %}

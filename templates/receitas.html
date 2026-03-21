@@ -8,19 +8,19 @@
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
     <div class="card" style="border-left: 4px solid #2e7d52;">
         <p style="font-size: 13px; color: #888;">Receitas fixas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">R$ {{ '%.2f'|format(total_fixo) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">{{ total_fixo|moeda }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #1a56a0;">
         <p style="font-size: 13px; color: #888;">Extras do mês</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #1a56a0; margin-top: 6px;">R$ {{ '%.2f'|format(total_extra) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #1a56a0; margin-top: 6px;">{{ total_extra|moeda }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #0a6a7a;">
         <p style="font-size: 13px; color: #888;">Clientes ({{ clientes|length }} ativos)</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #0a6a7a; margin-top: 6px;">R$ {{ '%.2f'|format(total_clientes) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #0a6a7a; margin-top: 6px;">{{ total_clientes|moeda }}</p>
     </div>
     <div class="card" style="border-left: 4px solid #6a1a9a;">
         <p style="font-size: 13px; color: #888;">Total do mês</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #6a1a9a; margin-top: 6px;">R$ {{ '%.2f'|format(total_geral) }}</p>
+        <p class="vm" style="font-size: 22px; font-weight: 600; color: #6a1a9a; margin-top: 6px;">{{ total_geral|moeda }}</p>
     </div>
 </div>
 
@@ -47,7 +47,7 @@
                 {% for receita in fixas %}
                 <tr>
                     <td style="font-weight: 500;">{{ receita.descricao }}</td>
-                    <td class="vm" style="color: #2e7d52; font-weight: 500;">R$ {{ '%.2f'|format(receita.valor) }}</td>
+                    <td class="vm" style="color: #2e7d52; font-weight: 500;">{{ receita.valor|moeda }}</td>
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <button onclick="abrirEdicaoReceita({{ receita.id }}, '{{ receita.descricao }}', {{ receita.valor }})"
@@ -96,7 +96,7 @@
                     <td style="font-weight: 500;">{{ receita.descricao }}</td>
                     <td class="vm" style="color: #1a56a0; font-weight: 500;">
                         {% if receita.lancado_mes %}
-                            R$ {{ '%.2f'|format(receita.lancado_mes.valor) }}
+                            {{ receita.lancado_mes.valor|moeda }}
                         {% else %}
                             <span style="color: #aaa; font-size: 13px;">Não lançado</span>
                         {% endif %}
@@ -148,7 +148,7 @@
                 {% for cliente in clientes %}
                 <tr style="{{ 'background: #f0faf5;' if cliente.pagamento_mes else '' }}">
                     <td style="font-weight: 500;">{{ cliente.nome }}</td>
-                    <td class="vm" style="color: #0a6a7a; font-weight: 500;">R$ {{ '%.2f'|format(cliente.valor_mensalidade) }}</td>
+                    <td class="vm" style="color: #0a6a7a; font-weight: 500;">{{ cliente.valor_mensalidade|moeda }}</td>
                     <td>Dia {{ cliente.dia_vencimento }}</td>
                     <td style="text-align: center;">
                         {% if cliente.pagamento_mes %}

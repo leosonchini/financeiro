@@ -12,6 +12,10 @@ app.config['SECRET_KEY'] = 'sua-chave-secreta-aqui'
 
 db.init_app(app)
 
+@app.template_filter('moeda')
+def moeda_filter(value):
+    return f"R$ {value:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+
 @app.before_request
 def criar_tabelas():
     db.create_all()

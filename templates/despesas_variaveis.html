@@ -85,7 +85,7 @@
                     </td>
                     <td class="vm">
                         {% if despesa.lancamento_mes %}
-                            R$ {{ '%.2f'|format(despesa.lancamento_mes.valor) }}
+                            {{ despesa.lancamento_mes.valor|moeda }}
                         {% else %}
                             <span style="color: #aaa; font-size: 13px;">Não lançado</span>
                         {% endif %}
