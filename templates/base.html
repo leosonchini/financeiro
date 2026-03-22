@@ -4,110 +4,237 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financeiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f6f8; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1a1a2e; }
 
+        /* SIDEBAR */
         .sidebar {
-            width: 220px; min-height: 100vh; background: #1a1a2e;
-            padding: 24px 0; position: fixed; top: 0; left: 0;
-            z-index: 100; transition: transform 0.3s;
+            width: 240px; min-height: 100vh; background: #0f0f1a;
+            position: fixed; top: 0; left: 0; z-index: 100;
+            transition: transform 0.3s; display: flex; flex-direction: column;
         }
-        .sidebar h1 {
-            color: #fff; font-size: 18px; padding: 0 24px 24px;
-            border-bottom: 1px solid #2a2a4a;
+        .sidebar-logo {
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        .sidebar a {
-            display: block; color: #aaa; text-decoration: none;
-            padding: 12px 24px; font-size: 14px; transition: all 0.2s;
+        .sidebar-logo h1 {
+            color: #fff; font-size: 17px; font-weight: 600; letter-spacing: -0.3px;
         }
-        .sidebar a:hover, .sidebar a.ativo { background: #2a2a4a; color: #fff; }
+        .sidebar-logo span {
+            font-size: 11px; color: #6366f1; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
 
         .mes-ref {
-            margin: 0 16px 24px;
-            background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
-            border-radius: 10px; padding: 14px 16px;
-            border: 1px solid #4a4a8a;
+            margin: 16px 16px 8px;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: 12px; padding: 14px 16px;
+            border: 1px solid rgba(99,102,241,0.3);
         }
-        .mes-ref p:first-child {
-            font-size: 10px; color: #8888bb; margin-bottom: 6px;
+        .mes-ref .label {
+            font-size: 10px; color: #a5b4fc; margin-bottom: 4px;
             text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
         }
-        .mes-ref p:last-child {
-            font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em;
+        .mes-ref .valor {
+            font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.3px;
         }
         .mes-ref .barra {
-            margin-top: 8px; height: 3px;
-            background: linear-gradient(90deg, #6a6aff, #aa6aff); border-radius: 2px;
+            margin-top: 10px; height: 2px;
+            background: linear-gradient(90deg, #6366f1, #a78bfa); border-radius: 2px;
         }
 
+        .btn-olho {
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            color: #6b7280; font-size: 12px; font-family: 'Inter', sans-serif;
+            padding: 10px 20px; width: 100%; transition: color 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 4px;
+        }
+        .btn-olho:hover { color: #a5b4fc; }
+
+        .nav-section {
+            padding: 8px 12px 4px;
+            font-size: 10px; color: #4b5563; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .sidebar a {
+            display: flex; align-items: center; gap: 10px;
+            color: #9ca3af; text-decoration: none;
+            padding: 9px 20px; font-size: 13px; font-weight: 500;
+            transition: all 0.15s; border-radius: 0; position: relative;
+        }
+        .sidebar a:hover { color: #e5e7eb; background: rgba(255,255,255,0.04); }
+        .sidebar a.ativo {
+            color: #fff; background: rgba(99,102,241,0.15);
+            border-right: 2px solid #6366f1;
+        }
+        .sidebar a .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor; opacity: 0.5; flex-shrink: 0;
+        }
+        .sidebar a.ativo .dot { opacity: 1; background: #6366f1; }
+
+        /* TOPBAR MOBILE */
         .topbar-mobile {
-            display: none; background: #1a1a2e; padding: 14px 20px;
+            display: none; background: #0f0f1a; padding: 14px 20px;
             position: fixed; top: 0; left: 0; right: 0; z-index: 200;
             align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        .topbar-mobile h1 { color: #fff; font-size: 16px; }
+        .topbar-mobile h1 { color: #fff; font-size: 15px; font-weight: 600; }
+        .topbar-btns { display: flex; align-items: center; gap: 12px; }
         .btn-menu {
             background: none; border: none; cursor: pointer;
-            display: flex; flex-direction: column; gap: 5px; padding: 4px;
+            display: flex; flex-direction: column; gap: 4px; padding: 4px;
         }
-        .btn-menu span {
-            display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px;
-        }
+        .btn-menu span { display: block; width: 20px; height: 2px; background: #9ca3af; border-radius: 2px; }
 
         .overlay {
             display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 99;
+            backdrop-filter: blur(2px);
         }
         .overlay.ativo { display: block; }
 
-        .conteudo { margin-left: 220px; padding: 32px; width: calc(100% - 220px); }
-        .cabecalho { margin-bottom: 24px; }
-        .cabecalho h2 { font-size: 22px; color: #1a1a2e; }
-        .cabecalho p { color: #888; font-size: 14px; margin-top: 4px; }
+        /* CONTEÚDO */
+        .conteudo { margin-left: 240px; padding: 32px; width: calc(100% - 240px); min-height: 100vh; }
+        .cabecalho { margin-bottom: 28px; }
+        .cabecalho h2 { font-size: 22px; font-weight: 600; color: #111827; letter-spacing: -0.4px; }
+        .cabecalho p { color: #6b7280; font-size: 13px; margin-top: 4px; }
 
+        /* CARDS */
         .card {
-            background: #fff; border-radius: 10px;
-            padding: 24px; margin-bottom: 20px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            background: #fff; border-radius: 14px;
+            padding: 22px 24px; margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
         }
+        .card-title {
+            font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 16px;
+        }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: #fff; border-radius: 14px; padding: 20px 22px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .stat-card .stat-label {
+            font-size: 12px; font-weight: 500; color: #6b7280;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+        }
+        .stat-card .stat-value {
+            font-size: 24px; font-weight: 600; letter-spacing: -0.5px;
+        }
+        .stat-card .stat-sub {
+            font-size: 11px; color: #9ca3af; margin-top: 4px;
+        }
+
+        /* BOTÕES */
         .btn {
-            display: inline-block; padding: 8px 18px; border-radius: 6px;
-            border: none; cursor: pointer; font-size: 14px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 8px;
+            border: none; cursor: pointer; font-size: 13px;
+            font-weight: 500; font-family: 'Inter', sans-serif;
+            text-decoration: none; transition: all 0.15s;
         }
-        .btn-primary { background: #1a1a2e; color: #fff; }
-        .btn-success { background: #2e7d52; color: #fff; }
-        .btn-danger { background: #c0392b; color: #fff; }
+        .btn-primary {
+            background: #6366f1; color: #fff;
+        }
+        .btn-primary:hover { background: #4f46e5; }
+        .btn-secondary {
+            background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-danger { background: #fee2e2; color: #dc2626; }
+        .btn-danger:hover { background: #fecaca; }
 
+        /* INPUTS */
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px;
+            font-size: 13px; font-family: 'Inter', sans-serif; color: #111827;
+            background: #fff; transition: border-color 0.15s, box-shadow 0.15s;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+        /* TABELAS */
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 10px 12px; font-size: 13px;
-             color: #888; border-bottom: 1px solid #eee; }
-        td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
-        tr:last-child td { border-bottom: none; }
-        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-        .badge {
-            display: inline-block; padding: 3px 10px; border-radius: 20px;
-            font-size: 12px; font-weight: 500;
+        th {
+            text-align: left; padding: 10px 14px; font-size: 11px;
+            font-weight: 600; color: #6b7280; text-transform: uppercase;
+            letter-spacing: 0.05em; border-bottom: 1px solid #f3f4f6;
+            background: #f9fafb;
         }
-        .badge-verde { background: #e6f4ee; color: #2e7d52; }
-        .badge-amarelo { background: #fef3e2; color: #8a5a00; }
-        .badge-vermelho { background: #fce8e8; color: #b03030; }
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+        td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafafa; }
+        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #f3f4f6; }
 
+        /* BADGES */
+        .badge {
+            display: inline-flex; align-items: center; padding: 3px 10px;
+            border-radius: 20px; font-size: 11px; font-weight: 500;
+        }
+        .badge-verde { background: #dcfce7; color: #166534; }
+        .badge-amarelo { background: #fef9c3; color: #854d0e; }
+        .badge-vermelho { background: #fee2e2; color: #991b1b; }
+        .badge-azul { background: #dbeafe; color: #1e40af; }
+
+        /* STATUS PAGAMENTO */
+        .btn-pago {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;
+            border-radius: 8px; padding: 6px 12px; font-size: 12px;
+            font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+        }
+        .btn-pago:hover { background: #bbf7d0; }
+        .btn-aberto {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fef9c3; color: #854d0e; border: 1px dashed #fde047;
+            border-radius: 8px; padding: 6px 12px; font-size: 12px;
+            font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+        }
+        .btn-aberto:hover { background: #fef08a; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-box {
+            background: #fff; border-radius: 16px; padding: 28px;
+            width: 420px; max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .modal-title { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 20px; }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px; }
+        .field input, .field select { width: 100%; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+        /* RESPONSIVO */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); width: 260px; }
             .sidebar.aberto { transform: translateX(0); }
             .topbar-mobile { display: flex; }
-            .conteudo { margin-left: 0; padding: 16px; padding-top: 70px; width: 100%; }
+            .conteudo { margin-left: 0; padding: 16px; padding-top: 68px; width: 100%; }
             .cabecalho h2 { font-size: 18px; }
             table { min-width: 500px; }
-            th, td { padding: 8px; }
+            td, th { padding: 10px; }
             .card { padding: 16px; }
             div[style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
             div[style*="grid-template-columns: repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
             div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
-
         @media (max-width: 480px) {
             div[style*="grid-template-columns: repeat(2"] { grid-template-columns: 1fr !important; }
             div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr !important; }
@@ -119,9 +246,8 @@
 
 <div class="topbar-mobile">
     <h1>Financeiro</h1>
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <button onclick="toggleValores()"
-            style="background: none; border: none; cursor: pointer; color: #fff; display: flex; align-items: center;">
+    <div class="topbar-btns">
+        <button onclick="toggleValores()" style="background:none;border:none;cursor:pointer;color:#9ca3af;display:flex;align-items:center;">
             <span class="icone-olho"></span>
         </button>
         <button class="btn-menu" onclick="toggleMenu()">
@@ -133,26 +259,42 @@
 <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
 
 <div class="sidebar" id="sidebar">
-    <h1>Financeiro</h1>
+    <div class="sidebar-logo">
+        <span>Sistema</span>
+        <h1>Financeiro</h1>
+    </div>
     <div class="mes-ref">
-        <p>Mês de referência</p>
-        <p>{{ mes_atual }}</p>
+        <div class="label">Mês de referência</div>
+        <div class="valor">{{ mes_atual }}</div>
         <div class="barra"></div>
     </div>
-    <button onclick="toggleValores()"
-        style="display: flex; align-items: center; gap: 8px; background: none; border: none;
-        cursor: pointer; color: #aaa; font-size: 13px; padding: 10px 24px; width: 100%;
-        border-bottom: 1px solid #2a2a4a; margin-bottom: 8px;">
+    <button class="btn-olho" onclick="toggleValores()">
         <span class="icone-olho"></span>
         <span class="texto-olho">Mostrar valores</span>
     </button>
-    <a href="/" class="{{ 'ativo' if request.path == '/' }}" onclick="fecharMenu()">Painel</a>
-    <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}" onclick="fecharMenu()">Receitas</a>
-    <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}" onclick="fecharMenu()">Clientes</a>
-    <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}" onclick="fecharMenu()">Despesas Fixas</a>
-    <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}" onclick="fecharMenu()">Despesas Variáveis</a>
-    <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}" onclick="fecharMenu()">Parcelas</a>
-    <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">Importar Excel</a>
+    <div class="nav-section">Menu</div>
+    <a href="/" class="{{ 'ativo' if request.path == '/' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Painel
+    </a>
+    <a href="/receitas" class="{{ 'ativo' if request.path == '/receitas' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Receitas
+    </a>
+    <a href="/clientes" class="{{ 'ativo' if request.path == '/clientes' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Clientes
+    </a>
+    <a href="/despesas-fixas" class="{{ 'ativo' if request.path == '/despesas-fixas' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Despesas Fixas
+    </a>
+    <a href="/despesas-variaveis" class="{{ 'ativo' if request.path == '/despesas-variaveis' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Despesas Variáveis
+    </a>
+    <a href="/parcelas" class="{{ 'ativo' if request.path == '/parcelas' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Parcelas
+    </a>
+    <div class="nav-section" style="margin-top:8px;">Ferramentas</div>
+    <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Importar Excel
+    </a>
 </div>
 
 <div class="conteudo">
@@ -171,10 +313,10 @@ function fecharMenu() {
     document.getElementById('overlay').classList.remove('ativo');
 }
 function olhoAberto() {
-    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
 }
 function olhoFechado() {
-    return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
 }
 function aplicarEstado() {
     document.querySelectorAll('.vm').forEach(function(el) {
@@ -193,9 +335,7 @@ function toggleValores() {
     localStorage.setItem('valoresVisiveis', valoresVisiveis);
     aplicarEstado();
 }
-document.addEventListener('DOMContentLoaded', function() {
-    aplicarEstado();
-});
+document.addEventListener('DOMContentLoaded', function() { aplicarEstado(); });
 </script>
 </body>
 </html>

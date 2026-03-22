@@ -6,20 +6,26 @@
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Novo cliente</p>
-    <form method="POST" action="/clientes/novo" style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <input type="text" name="nome" placeholder="Nome do cliente" required
-            style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
-        <input type="number" name="valor" placeholder="Valor da mensalidade" required step="0.01"
-            style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
-        <input type="number" name="dia_vencimento" placeholder="Dia vencimento" required min="1" max="31"
-            style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div class="card-title">Novo cliente</div>
+    <form method="POST" action="/clientes/novo" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 160px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Nome</label>
+            <input type="text" name="nome" placeholder="Nome do cliente" required style="width: 100%;">
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Mensalidade (R$)</label>
+            <input type="number" name="valor" placeholder="0,00" required step="0.01" style="width: 100%;">
+        </div>
+        <div style="flex: 1; min-width: 100px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Dia vencimento</label>
+            <input type="number" name="dia_vencimento" placeholder="Ex: 10" required min="1" max="31" style="width: 100%;">
+        </div>
         <button type="submit" class="btn btn-primary">+ Adicionar</button>
     </form>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Lista de clientes</p>
+    <div class="card-title">Lista de clientes</div>
     {% if clientes %}
     <div class="table-container">
         <table>
@@ -34,14 +40,13 @@
             </thead>
             <tbody>
                 {% for cliente in clientes %}
-                <tr style="{{ 'background: #f0faf5;' if cliente.pagamento_mes else '' }}">
-                    <td style="font-weight: 500;">{{ cliente.nome }}</td>
-                    <td class="vm">{{ cliente.valor_mensalidade|moeda }}</td>
-                    <td>Dia {{ cliente.dia_vencimento }}</td>
+                <tr>
+                    <td style="font-weight: 500; color: #111827;">{{ cliente.nome }}</td>
+                    <td class="vm" style="font-weight: 600; color: #059669;">{{ cliente.valor_mensalidade|moeda }}</td>
+                    <td style="color: #6b7280;">Dia {{ cliente.dia_vencimento }}</td>
                     <td>
                         <form method="POST" action="/clientes/status/{{ cliente.id }}" style="display: inline;">
-                            <select name="status" onchange="this.form.submit()"
-                                style="border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; font-size: 13px;">
+                            <select name="status" onchange="this.form.submit()" style="font-size: 12px; padding: 4px 8px;">
                                 <option value="ativo" {{ 'selected' if cliente.status == 'ativo' }}>Ativo</option>
                                 <option value="pausado" {{ 'selected' if cliente.status == 'pausado' }}>Pausado</option>
                                 <option value="cancelado" {{ 'selected' if cliente.status == 'cancelado' }}>Cancelado</option>
@@ -51,13 +56,11 @@
                     <td style="text-align: center;">
                         <form method="POST" action="/clientes/pagar/{{ cliente.id }}">
                             {% if cliente.pagamento_mes %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                ✔ Pago — clique para desfazer
+                            <button type="submit" class="btn-pago">
+                                ✓ Pago — clique para desfazer
                             </button>
                             {% else %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <button type="submit" class="btn-aberto">
                                 ○ Em aberto — clique para marcar como pago
                             </button>
                             {% endif %}
@@ -69,7 +72,7 @@
         </table>
     </div>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhum cliente cadastrado ainda.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhum cliente cadastrado ainda.</p>
     {% endif %}
 </div>
 {% endblock %}

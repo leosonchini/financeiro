@@ -1,73 +1,39 @@
 {% extends 'base.html' %}
 {% block conteudo %}
 <div class="cabecalho">
-    <h2>Painel — {{ mes }}/{{ ano }}</h2>
-    <p>Visão geral do mês atual</p>
+    <h2>Painel</h2>
+    <p>Visão geral de {{ mes }}/{{ ano }}</p>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
-    <div class="card" style="border-left: 4px solid #2e7d52;">
-        <p style="font-size: 13px; color: #888;">Total de receitas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">{{ total_receitas|moeda }}</p>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+    <div class="stat-card" style="border-top: 3px solid #10b981;">
+        <div class="stat-label">Total de receitas</div>
+        <div class="stat-value vm" style="color: #059669;">{{ total_receitas|moeda }}</div>
+        <div class="stat-sub">Previsto para o mês</div>
     </div>
-    <div class="card" style="border-left: 4px solid #c0392b;">
-        <p style="font-size: 13px; color: #888;">Total de despesas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #c0392b; margin-top: 6px;">{{ total_despesas|moeda }}</p>
+    <div class="stat-card" style="border-top: 3px solid #ef4444;">
+        <div class="stat-label">Total de despesas</div>
+        <div class="stat-value vm" style="color: #dc2626;">{{ total_despesas|moeda }}</div>
+        <div class="stat-sub">Previsto para o mês</div>
     </div>
-    <div class="card" style="border-left: 4px solid #1a56a0;">
-        <p style="font-size: 13px; color: #888;">Saldo previsto</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
-            color: {{ '#2e7d52' if saldo_previsto >= 0 else '#c0392b' }};">
+    <div class="stat-card" style="border-top: 3px solid #6366f1;">
+        <div class="stat-label">Saldo do mês</div>
+        <div class="stat-value vm" style="color: {{ '#059669' if saldo_previsto >= 0 else '#dc2626' }};">
             {{ saldo_previsto|moeda }}
-        </p>
-        <p style="font-size: 11px; color: #888; margin-top: 4px;">Se tudo for pago/recebido</p>
-    </div>
-    <div class="card" style="border-left: 4px solid #6a1a9a;">
-        <p style="font-size: 13px; color: #888;">Saldo realizado</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; margin-top: 6px;
-            color: {{ '#2e7d52' if saldo_realizado >= 0 else '#c0392b' }};">
-            {{ saldo_realizado|moeda }}
-        </p>
-        <p style="font-size: 11px; color: #888; margin-top: 4px;">O que já entrou e saiu</p>
-    </div>
-</div>
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-    <div class="card">
-        <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas pagas</p>
-        <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span class="vm">{{ total_pago|moeda }} pagos</span>
-            <span class="vm">{{ total_despesas|moeda }} total</span>
         </div>
-        <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
-            {% set pct_pago = ((total_pago / total_despesas) * 100)|int if total_despesas > 0 else 0 %}
-            <div style="height: 100%; width: {{ pct_pago }}%; background: #2e7d52; border-radius: 5px;"></div>
-        </div>
-        <p style="font-size: 12px; color: #888; margin-top: 8px;">{{ pct_pago }}% das despesas quitadas</p>
-    </div>
-    <div class="card">
-        <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Receitas recebidas</p>
-        <div style="display: flex; justify-content: space-between; font-size: 13px; color: #888; margin-bottom: 8px;">
-            <span class="vm">{{ total_recebido|moeda }} recebidos</span>
-            <span class="vm">{{ total_receitas|moeda }} total</span>
-        </div>
-        <div style="height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
-            {% set pct_recebido = ((total_recebido / total_receitas) * 100)|int if total_receitas > 0 else 0 %}
-            <div style="height: 100%; width: {{ pct_recebido }}%; background: #1a56a0; border-radius: 5px;"></div>
-        </div>
-        <p style="font-size: 12px; color: #888; margin-top: 8px;">{{ pct_recebido }}% das receitas recebidas</p>
+        <div class="stat-sub">Receitas − Despesas</div>
     </div>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">
+    <div class="card-title">
         Contas em aberto
         {% if contas_abertas %}
-        <span style="font-size: 13px; font-weight: 400; color: #c0392b; margin-left: 8px;">
+        <span class="badge badge-vermelho" style="margin-left: 8px; font-size: 11px;">
             {{ contas_abertas|length }} pendente(s)
         </span>
         {% endif %}
-    </p>
+    </div>
     {% if contas_abertas %}
     <div class="table-container">
         <table>
@@ -81,65 +47,68 @@
             <tbody>
                 {% for conta in contas_abertas %}
                 <tr>
-                    <td style="font-weight: 500;">{{ conta.nome }}</td>
+                    <td style="font-weight: 500; color: #111827;">{{ conta.nome }}</td>
                     <td>
-                        <span class="badge {{ 'badge-vermelho' if conta.tipo == 'Fixa' else 'badge-amarelo' if conta.tipo == 'Variável' else 'badge-verde' }}">
+                        <span class="badge {{ 'badge-vermelho' if conta.tipo == 'Fixa' else 'badge-amarelo' if conta.tipo == 'Variável' else 'badge-azul' }}">
                             {{ conta.tipo }}
                         </span>
                     </td>
-                    <td class="vm" style="color: #c0392b; font-weight: 500;">{{ conta.valor|moeda }}</td>
+                    <td class="vm" style="color: #dc2626; font-weight: 600;">{{ conta.valor|moeda }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
     {% else %}
-    <p style="color: #2e7d52; font-size: 14px; font-weight: 500;">✔ Todas as contas do mês estão pagas!</p>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f0fdf4; border-radius: 10px; border: 1px solid #bbf7d0;">
+        <span style="color: #059669; font-size: 18px;">✓</span>
+        <p style="color: #166534; font-size: 13px; font-weight: 500;">Todas as contas do mês estão pagas!</p>
+    </div>
     {% endif %}
 </div>
 
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
     <div class="card">
-        <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas fixas</p>
+        <div class="card-title">Despesas fixas</div>
         {% for d in fixas %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
-            <span style="font-size: 13px;">{{ d.descricao }}</span>
-            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.pagamento_mes else '#c0392b' }};">
-                {{ '✔' if d.pagamento_mes else '○' }} {{ d.valor|moeda }}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+            <span style="font-size: 13px; color: #374151;">{{ d.descricao }}</span>
+            <span class="vm" style="font-size: 13px; font-weight: 600; color: {{ '#059669' if d.pagamento_mes else '#dc2626' }};">
+                <span style="font-size: 11px; margin-right: 2px;">{{ '✓' if d.pagamento_mes else '○' }}</span>{{ d.valor|moeda }}
             </span>
         </div>
         {% else %}
-        <p style="color: #888; font-size: 13px;">Nenhuma cadastrada.</p>
+        <p style="color: #9ca3af; font-size: 13px;">Nenhuma cadastrada.</p>
         {% endfor %}
     </div>
     <div class="card">
-        <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Despesas variáveis</p>
+        <div class="card-title">Despesas variáveis</div>
         {% for d in variaveis %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
-            <span style="font-size: 13px;">{{ d.descricao }}</span>
-            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if d.lancamento_mes and d.lancamento_mes.pago else '#c0392b' if d.lancamento_mes else '#aaa' }};">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+            <span style="font-size: 13px; color: #374151;">{{ d.descricao }}</span>
+            <span class="vm" style="font-size: 13px; font-weight: 600; color: {{ '#059669' if d.lancamento_mes and d.lancamento_mes.pago else '#dc2626' if d.lancamento_mes else '#9ca3af' }};">
                 {% if d.lancamento_mes %}
-                    {{ '✔' if d.lancamento_mes.pago else '○' }} {{ d.lancamento_mes.valor|moeda }}
+                    <span style="font-size: 11px; margin-right: 2px;">{{ '✓' if d.lancamento_mes.pago else '○' }}</span>{{ d.lancamento_mes.valor|moeda }}
                 {% else %}
-                    — Não lançado
+                    — não lançado
                 {% endif %}
             </span>
         </div>
         {% else %}
-        <p style="color: #888; font-size: 13px;">Nenhuma cadastrada.</p>
+        <p style="color: #9ca3af; font-size: 13px;">Nenhuma cadastrada.</p>
         {% endfor %}
     </div>
     <div class="card">
-        <p style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Clientes</p>
+        <div class="card-title">Clientes</div>
         {% for c in clientes %}
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0;">
-            <span style="font-size: 13px;">{{ c.nome }}</span>
-            <span class="vm" style="font-size: 13px; font-weight: 500; color: {{ '#2e7d52' if c.pagamento_mes else '#c0392b' }};">
-                {{ '✔' if c.pagamento_mes else '○' }} {{ c.valor_mensalidade|moeda }}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+            <span style="font-size: 13px; color: #374151;">{{ c.nome }}</span>
+            <span class="vm" style="font-size: 13px; font-weight: 600; color: {{ '#059669' if c.pagamento_mes else '#dc2626' }};">
+                <span style="font-size: 11px; margin-right: 2px;">{{ '✓' if c.pagamento_mes else '○' }}</span>{{ c.valor_mensalidade|moeda }}
             </span>
         </div>
         {% else %}
-        <p style="color: #888; font-size: 13px;">Nenhum cadastrado.</p>
+        <p style="color: #9ca3af; font-size: 13px;">Nenhum cadastrado.</p>
         {% endfor %}
     </div>
 </div>

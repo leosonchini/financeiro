@@ -5,35 +5,31 @@
     <p>Controle do que está parcelado — {{ mes }}/{{ ano }}</p>
 </div>
 
-<div class="card" style="border-left: 4px solid #c0392b;">
-    <p style="font-size: 13px; color: #888;">Total restante em parcelas</p>
-    <p style="font-size: 24px; font-weight: 600; color: #c0392b; margin-top: 6px;">
-        R$ {{ '%.2f'|format(total_restante) }}
-    </p>
+<div class="stat-card" style="border-top: 3px solid #ef4444; margin-bottom: 24px;">
+    <div class="stat-label">Total restante em parcelas</div>
+    <div class="stat-value vm" style="color: #dc2626;">{{ total_restante|moeda }}</div>
+    <div class="stat-sub">Soma de todas as parcelas pendentes</div>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Nova parcela</p>
+    <div class="card-title">Nova parcela</div>
     <form method="POST" action="/parcelas/nova">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Descrição</label>
-                <input type="text" name="descricao" placeholder="Ex: TV Samsung, Celular..." required
-                    style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div class="field">
+                <label>Descrição</label>
+                <input type="text" name="descricao" placeholder="Ex: TV Samsung, Celular..." required style="width: 100%;">
             </div>
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Valor da parcela</label>
-                <input type="number" name="valor_parcela" placeholder="R$ 0,00" required step="0.01"
-                    style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Valor da parcela (R$)</label>
+                <input type="number" name="valor_parcela" placeholder="0,00" required step="0.01" style="width: 100%;">
             </div>
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Nº parcelas</label>
-                <input type="number" name="num_parcelas" placeholder="Ex: 12" required min="1"
-                    style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Nº de parcelas</label>
+                <input type="number" name="num_parcelas" placeholder="Ex: 12" required min="1" style="width: 100%;">
             </div>
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Mês início</label>
-                <select name="mes_inicio" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Mês início</label>
+                <select name="mes_inicio" style="width: 100%;">
                     <option value="1">Janeiro</option>
                     <option value="2">Fevereiro</option>
                     <option value="3">Março</option>
@@ -48,28 +44,29 @@
                     <option value="12">Dezembro</option>
                 </select>
             </div>
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Ano início</label>
-                <input type="number" name="ano_inicio" placeholder="2026" value="2026" required
-                    style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Ano início</label>
+                <input type="number" name="ano_inicio" placeholder="2026" value="2026" required style="width: 100%;">
             </div>
-            <div>
-                <label style="font-size: 13px; color: #888; display: block; margin-bottom: 4px;">Cartão</label>
-                <select name="despesa_variavel_id" required style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Cartão</label>
+                <select name="despesa_variavel_id" required style="width: 100%;">
                     {% for dv in despesas_variaveis %}
                     <option value="{{ dv.id }}">{{ dv.descricao }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">+ Adicionar</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
+            + Adicionar parcela
+        </button>
     </form>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Parcelas em andamento</p>
+    <div class="card-title">Parcelas em andamento</div>
     {% if parcelas %}
-    <div style="overflow-x: auto;">
+    <div class="table-container">
         <table style="min-width: 500px;">
             <thead>
                 <tr>
@@ -84,41 +81,41 @@
             <tbody>
                 {% for compra in parcelas %}
                 <tr style="{{ 'opacity: 0.5;' if compra.parcelas_restantes == 0 else '' }}">
-                    <td style="font-weight: 500;">{{ compra.descricao }}</td>
+                    <td style="font-weight: 500; color: #111827;">{{ compra.descricao }}</td>
                     <td>
                         {% if compra.cartao %}
-                            <span style="font-size: 13px; color: #555;">{{ compra.cartao.descricao }}</span>
+                            <span style="font-size: 12px; color: #6b7280;">{{ compra.cartao.descricao }}</span>
                         {% else %}
-                            <span style="color: #aaa; font-size: 13px;">—</span>
+                            <span style="color: #9ca3af; font-size: 12px;">—</span>
                         {% endif %}
                     </td>
-                    <td>R$ {{ '%.2f'|format(compra.valor_parcela) }}</td>
+                    <td class="vm" style="font-weight: 600; color: #dc2626;">{{ compra.valor_parcela|moeda }}</td>
                     <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 60px; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
-                                <div style="height: 100%; border-radius: 4px; background: {{ '#2e7d52' if compra.parcelas_restantes == 0 else '#1a56a0' }};
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="flex: 1; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; min-width: 60px;">
+                                <div style="height: 100%; border-radius: 3px;
+                                    background: {{ '#10b981' if compra.parcelas_restantes == 0 else '#6366f1' }};
                                     width: {{ ((compra.parcelas_pagas / compra.num_parcelas) * 100)|int }}%;">
                                 </div>
                             </div>
-                            <span style="font-size: 12px; color: #888; white-space: nowrap;">
+                            <span style="font-size: 12px; color: #6b7280; white-space: nowrap;">
                                 {{ compra.parcelas_pagas }}/{{ compra.num_parcelas }}
                             </span>
                         </div>
                     </td>
-                    <td>
+                    <td class="vm">
                         {% if compra.parcelas_restantes == 0 %}
                             <span class="badge badge-verde">Quitado</span>
                         {% else %}
-                            <span style="font-size: 14px; color: #c0392b; font-weight: 500;">
-                                R$ {{ '%.2f'|format(compra.valor_restante) }}
+                            <span style="font-size: 13px; color: #dc2626; font-weight: 600;">
+                                {{ compra.valor_restante|moeda }}
                             </span>
                         {% endif %}
                     </td>
                     <td style="text-align: center;">
                         <form method="POST" action="/parcelas/excluir/{{ compra.id }}"
                             onsubmit="return confirm('Excluir {{ compra.descricao }}?')">
-                            <button type="submit"
-                                style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                            <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 12px;">
                                 Excluir
                             </button>
                         </form>
@@ -129,7 +126,7 @@
         </table>
     </div>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhuma parcela cadastrada ainda.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhuma parcela cadastrada ainda.</p>
     {% endif %}
 </div>
 {% endblock %}

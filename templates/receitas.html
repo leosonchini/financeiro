@@ -6,31 +6,35 @@
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
-    <div class="card" style="border-left: 4px solid #2e7d52;">
-        <p style="font-size: 13px; color: #888;">Receitas fixas</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #2e7d52; margin-top: 6px;">{{ total_fixo|moeda }}</p>
+    <div class="stat-card" style="border-top: 3px solid #10b981;">
+        <div class="stat-label">Receitas fixas</div>
+        <div class="stat-value vm" style="color: #059669;">{{ total_fixo|moeda }}</div>
     </div>
-    <div class="card" style="border-left: 4px solid #1a56a0;">
-        <p style="font-size: 13px; color: #888;">Extras do mês</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #1a56a0; margin-top: 6px;">{{ total_extra|moeda }}</p>
+    <div class="stat-card" style="border-top: 3px solid #6366f1;">
+        <div class="stat-label">Extras do mês</div>
+        <div class="stat-value vm" style="color: #6366f1;">{{ total_extra|moeda }}</div>
     </div>
-    <div class="card" style="border-left: 4px solid #0a6a7a;">
-        <p style="font-size: 13px; color: #888;">Clientes ({{ clientes|length }} ativos)</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #0a6a7a; margin-top: 6px;">{{ total_clientes|moeda }}</p>
+    <div class="stat-card" style="border-top: 3px solid #0ea5e9;">
+        <div class="stat-label">Clientes ({{ clientes|length }} ativos)</div>
+        <div class="stat-value vm" style="color: #0284c7;">{{ total_clientes|moeda }}</div>
     </div>
-    <div class="card" style="border-left: 4px solid #6a1a9a;">
-        <p style="font-size: 13px; color: #888;">Total do mês</p>
-        <p class="vm" style="font-size: 22px; font-weight: 600; color: #6a1a9a; margin-top: 6px;">{{ total_geral|moeda }}</p>
+    <div class="stat-card" style="border-top: 3px solid #8b5cf6;">
+        <div class="stat-label">Total do mês</div>
+        <div class="stat-value vm" style="color: #7c3aed;">{{ total_geral|moeda }}</div>
     </div>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Receitas fixas</p>
-    <form method="POST" action="/receitas/nova-fixa" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-        <input type="text" name="descricao" placeholder="Ex: Salário, Aluguel recebido..." required
-            style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
-        <input type="number" name="valor" placeholder="Valor (R$)" required step="0.01"
-            style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div class="card-title">Receitas fixas</div>
+    <form method="POST" action="/receitas/nova-fixa" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 160px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Salário, Aluguel recebido..." required style="width: 100%;">
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Valor (R$)</label>
+            <input type="number" name="valor" placeholder="0,00" required step="0.01" style="width: 100%;">
+        </div>
         <button type="submit" class="btn btn-primary">+ Adicionar</button>
     </form>
     {% if fixas %}
@@ -46,18 +50,17 @@
             <tbody>
                 {% for receita in fixas %}
                 <tr>
-                    <td style="font-weight: 500;">{{ receita.descricao }}</td>
-                    <td class="vm" style="color: #2e7d52; font-weight: 500;">{{ receita.valor|moeda }}</td>
+                    <td style="font-weight: 500; color: #111827;">{{ receita.descricao }}</td>
+                    <td class="vm" style="color: #059669; font-weight: 600;">{{ receita.valor|moeda }}</td>
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <button onclick="abrirEdicaoReceita({{ receita.id }}, '{{ receita.descricao }}', {{ receita.valor }})"
-                                style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;">
                                 Editar
                             </button>
                             <form method="POST" action="/receitas/excluir/{{ receita.id }}"
                                 onsubmit="return confirm('Excluir {{ receita.descricao }}?')">
-                                <button type="submit"
-                                    style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 12px;">
                                     Excluir
                                 </button>
                             </form>
@@ -69,15 +72,17 @@
         </table>
     </div>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhuma receita fixa cadastrada ainda.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhuma receita fixa cadastrada ainda.</p>
     {% endif %}
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Receitas extras</p>
-    <form method="POST" action="/receitas/nova-extra" style="display: flex; gap: 12px; margin-bottom: 20px;">
-        <input type="text" name="descricao" placeholder="Ex: Freela, Bônus, Comissão..." required
-            style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div class="card-title">Receitas extras</div>
+    <form method="POST" action="/receitas/nova-extra" style="display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-end;">
+        <div style="flex: 2;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Freela, Bônus, Comissão..." required style="width: 100%;">
+        </div>
         <button type="submit" class="btn btn-primary">+ Adicionar</button>
     </form>
     {% if extras %}
@@ -93,12 +98,12 @@
             <tbody>
                 {% for receita in extras %}
                 <tr>
-                    <td style="font-weight: 500;">{{ receita.descricao }}</td>
-                    <td class="vm" style="color: #1a56a0; font-weight: 500;">
+                    <td style="font-weight: 500; color: #111827;">{{ receita.descricao }}</td>
+                    <td class="vm" style="color: #6366f1; font-weight: 600;">
                         {% if receita.lancado_mes %}
                             {{ receita.lancado_mes.valor|moeda }}
                         {% else %}
-                            <span style="color: #aaa; font-size: 13px;">Não lançado</span>
+                            <span style="color: #9ca3af; font-size: 12px;">Não lançado</span>
                         {% endif %}
                     </td>
                     <td style="text-align: center;">
@@ -106,16 +111,14 @@
                             <form method="POST" action="/receitas/lancar-extra/{{ receita.id }}"
                                 style="display: flex; gap: 6px; align-items: center;">
                                 <input type="number" name="valor" placeholder="R$ valor" step="0.01" required
-                                    style="width: 110px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
-                                <button type="submit"
-                                    style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                    style="width: 110px;">
+                                <button type="submit" class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;">
                                     {{ 'Atualizar' if receita.lancado_mes else 'Lançar' }}
                                 </button>
                             </form>
                             <form method="POST" action="/receitas/excluir/{{ receita.id }}"
                                 onsubmit="return confirm('Excluir {{ receita.descricao }}?')">
-                                <button type="submit"
-                                    style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 12px;">
                                     Excluir
                                 </button>
                             </form>
@@ -127,12 +130,12 @@
         </table>
     </div>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhuma receita extra cadastrada ainda.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhuma receita extra cadastrada ainda.</p>
     {% endif %}
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Receitas de clientes</p>
+    <div class="card-title">Receitas de clientes</div>
     {% if clientes %}
     <div class="table-container">
         <table>
@@ -146,13 +149,13 @@
             </thead>
             <tbody>
                 {% for cliente in clientes %}
-                <tr style="{{ 'background: #f0faf5;' if cliente.pagamento_mes else '' }}">
-                    <td style="font-weight: 500;">{{ cliente.nome }}</td>
-                    <td class="vm" style="color: #0a6a7a; font-weight: 500;">{{ cliente.valor_mensalidade|moeda }}</td>
-                    <td>Dia {{ cliente.dia_vencimento }}</td>
+                <tr style="{{ 'background: #f0fdf4;' if cliente.pagamento_mes else '' }}">
+                    <td style="font-weight: 500; color: #111827;">{{ cliente.nome }}</td>
+                    <td class="vm" style="color: #0284c7; font-weight: 600;">{{ cliente.valor_mensalidade|moeda }}</td>
+                    <td style="color: #6b7280;">Dia {{ cliente.dia_vencimento }}</td>
                     <td style="text-align: center;">
                         {% if cliente.pagamento_mes %}
-                            <span class="badge badge-verde">✔ Pago</span>
+                            <span class="badge badge-verde">✓ Pago</span>
                         {% else %}
                             <span class="badge badge-amarelo">○ Em aberto</span>
                         {% endif %}
@@ -162,34 +165,28 @@
             </tbody>
         </table>
     </div>
-    <p style="font-size: 12px; color: #888; margin-top: 12px;">
-        Para marcar como pago, acesse a tela de <a href="/clientes" style="color: #1a56a0;">Clientes</a>.
+    <p style="font-size: 12px; color: #9ca3af; margin-top: 12px;">
+        Para marcar como pago, acesse <a href="/clientes" style="color: #6366f1;">Clientes</a>.
     </p>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhum cliente ativo cadastrado.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhum cliente ativo cadastrado.</p>
     {% endif %}
 </div>
 
-<div id="modal-receita" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center;">
-    <div style="background: #fff; border-radius: 12px; padding: 28px; width: 400px;">
-        <p style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Editar receita fixa</p>
+<div class="modal-overlay" id="modal-receita">
+    <div class="modal-box">
+        <div class="modal-title">Editar receita fixa</div>
         <form method="POST" id="form-receita">
-            <div style="margin-bottom: 14px;">
-                <label style="font-size: 13px; color: #888;">Descrição</label>
-                <input type="text" name="descricao" id="edit-receita-descricao" required
-                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Descrição</label>
+                <input type="text" name="descricao" id="edit-receita-descricao" required>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; color: #888;">Valor (R$)</label>
-                <input type="number" name="valor" id="edit-receita-valor" required step="0.01"
-                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Valor (R$)</label>
+                <input type="number" name="valor" id="edit-receita-valor" required step="0.01">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" onclick="fecharModalReceita()"
-                    style="padding: 8px 18px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">
-                    Cancelar
-                </button>
+            <div class="modal-actions">
+                <button type="button" onclick="fecharModalReceita()" class="btn btn-secondary">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
         </form>

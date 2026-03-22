@@ -6,18 +6,22 @@
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Nova despesa fixa</p>
-    <form method="POST" action="/despesas-fixas/nova" style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <input type="text" name="descricao" placeholder="Ex: Aluguel, Prestação do carro..." required
-            style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
-        <input type="number" name="valor" placeholder="Valor (R$)" required step="0.01"
-            style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div class="card-title">Nova despesa fixa</div>
+    <form method="POST" action="/despesas-fixas/nova" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 160px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Aluguel, Prestação do carro..." required style="width: 100%;">
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Valor (R$)</label>
+            <input type="number" name="valor" placeholder="0,00" required step="0.01" style="width: 100%;">
+        </div>
         <button type="submit" class="btn btn-primary">+ Adicionar</button>
     </form>
 </div>
 
 <div class="card">
-    <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px;">Despesas do mês</p>
+    <div class="card-title">Despesas do mês</div>
     {% if despesas %}
     <div class="table-container">
         <table>
@@ -31,19 +35,17 @@
             </thead>
             <tbody>
                 {% for despesa in despesas %}
-                <tr style="{{ 'background: #f0faf5;' if despesa.pagamento_mes else '' }}">
-                    <td style="font-weight: 500;">{{ despesa.descricao }}</td>
-                    <td class="vm">{{ despesa.valor|moeda }}</td>
+                <tr style="{{ 'background: #f0fdf4;' if despesa.pagamento_mes else '' }}">
+                    <td style="font-weight: 500; color: #111827;">{{ despesa.descricao }}</td>
+                    <td class="vm" style="font-weight: 600; color: #dc2626;">{{ despesa.valor|moeda }}</td>
                     <td style="text-align: center;">
                         <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
                             {% if despesa.pagamento_mes %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #e6f4ee; color: #2e7d52; border: 1.5px solid #2e7d52; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                                ✔ Pago — clique para desfazer
+                            <button type="submit" class="btn-pago">
+                                ✓ Pago — clique para desfazer
                             </button>
                             {% else %}
-                            <button type="submit"
-                                style="display: inline-flex; align-items: center; gap: 6px; background: #fff8e6; color: #8a5a00; border: 1.5px dashed #f0a500; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <button type="submit" class="btn-aberto">
                                 ○ Em aberto — clique para marcar como pago
                             </button>
                             {% endif %}
@@ -52,13 +54,12 @@
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 8px; justify-content: center;">
                             <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }})"
-                                style="background: #e8f0fb; color: #1a56a0; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;">
                                 Editar
                             </button>
                             <form method="POST" action="/despesas-fixas/desativar/{{ despesa.id }}"
                                 onsubmit="return confirm('Desativar {{ despesa.descricao }}?')">
-                                <button type="submit"
-                                    style="background: #fce8e8; color: #b03030; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;">
+                                <button type="submit" class="btn btn-danger" style="padding: 5px 12px; font-size: 12px;">
                                     Desativar
                                 </button>
                             </form>
@@ -70,31 +71,24 @@
         </table>
     </div>
     {% else %}
-    <p style="color: #888; font-size: 14px;">Nenhuma despesa fixa cadastrada ainda.</p>
+    <p style="color: #9ca3af; font-size: 13px;">Nenhuma despesa fixa cadastrada ainda.</p>
     {% endif %}
 </div>
 
-<!-- Modal de edição -->
-<div id="modal-edicao" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); z-index: 999; align-items: center; justify-content: center;">
-    <div style="background: #fff; border-radius: 12px; padding: 28px; width: 400px;">
-        <p style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Editar despesa fixa</p>
+<div class="modal-overlay" id="modal-edicao">
+    <div class="modal-box">
+        <div class="modal-title">Editar despesa fixa</div>
         <form method="POST" id="form-edicao">
-            <div style="margin-bottom: 14px;">
-                <label style="font-size: 13px; color: #888;">Descrição</label>
-                <input type="text" name="descricao" id="edit-descricao" required
-                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Descrição</label>
+                <input type="text" name="descricao" id="edit-descricao" required>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; color: #888;">Valor (R$)</label>
-                <input type="number" name="valor" id="edit-valor" required step="0.01"
-                    style="width: 100%; margin-top: 4px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <div class="field">
+                <label>Valor (R$)</label>
+                <input type="number" name="valor" id="edit-valor" required step="0.01">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" onclick="fecharEdicao()"
-                    style="padding: 8px 18px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;">
-                    Cancelar
-                </button>
+            <div class="modal-actions">
+                <button type="button" onclick="fecharEdicao()" class="btn btn-secondary">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
         </form>
