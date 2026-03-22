@@ -9,7 +9,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1a1a2e; }
 
-        /* SIDEBAR */
         .sidebar {
             width: 240px; min-height: 100vh; background: #0f0f1a;
             position: fixed; top: 0; left: 0; z-index: 100;
@@ -63,7 +62,7 @@
             display: flex; align-items: center; gap: 10px;
             color: #9ca3af; text-decoration: none;
             padding: 9px 20px; font-size: 13px; font-weight: 500;
-            transition: all 0.15s; border-radius: 0; position: relative;
+            transition: all 0.15s; position: relative;
         }
         .sidebar a:hover { color: #e5e7eb; background: rgba(255,255,255,0.04); }
         .sidebar a.ativo {
@@ -76,7 +75,27 @@
         }
         .sidebar a.ativo .dot { opacity: 1; background: #6366f1; }
 
-        /* TOPBAR MOBILE */
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 12px 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .sidebar-footer .user-info {
+            padding: 8px 12px 12px;
+            font-size: 12px; color: #6b7280;
+        }
+        .sidebar-footer .user-info strong {
+            display: block; color: #9ca3af; font-size: 13px; margin-bottom: 2px;
+        }
+        .btn-sair {
+            display: flex; align-items: center; gap: 8px;
+            color: #ef4444; font-size: 13px; font-weight: 500;
+            text-decoration: none; padding: 8px 12px; border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .btn-sair:hover { background: rgba(239,68,68,0.08); }
+        .btn-sair .dot { background: #ef4444 !important; opacity: 1 !important; }
+
         .topbar-mobile {
             display: none; background: #0f0f1a; padding: 14px 20px;
             position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -98,13 +117,11 @@
         }
         .overlay.ativo { display: block; }
 
-        /* CONTEÚDO */
         .conteudo { margin-left: 240px; padding: 32px; width: calc(100% - 240px); min-height: 100vh; }
         .cabecalho { margin-bottom: 28px; }
         .cabecalho h2 { font-size: 22px; font-weight: 600; color: #111827; letter-spacing: -0.4px; }
         .cabecalho p { color: #6b7280; font-size: 13px; margin-top: 4px; }
 
-        /* CARDS */
         .card {
             background: #fff; border-radius: 14px;
             padding: 22px 24px; margin-bottom: 20px;
@@ -115,7 +132,6 @@
             font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 16px;
         }
 
-        /* STAT CARDS */
         .stat-card {
             background: #fff; border-radius: 14px; padding: 20px 22px;
             border: 1px solid #e5e7eb;
@@ -132,7 +148,6 @@
             font-size: 11px; color: #9ca3af; margin-top: 4px;
         }
 
-        /* BOTÕES */
         .btn {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 8px 16px; border-radius: 8px;
@@ -140,19 +155,15 @@
             font-weight: 500; font-family: 'Inter', sans-serif;
             text-decoration: none; transition: all 0.15s;
         }
-        .btn-primary {
-            background: #6366f1; color: #fff;
-        }
+        .btn-primary { background: #6366f1; color: #fff; }
         .btn-primary:hover { background: #4f46e5; }
-        .btn-secondary {
-            background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb;
-        }
+        .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
         .btn-secondary:hover { background: #e5e7eb; }
         .btn-danger { background: #fee2e2; color: #dc2626; }
         .btn-danger:hover { background: #fecaca; }
 
-        /* INPUTS */
-        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+        input[type="text"], input[type="number"], input[type="date"],
+        input[type="email"], input[type="password"], select, textarea {
             padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 8px;
             font-size: 13px; font-family: 'Inter', sans-serif; color: #111827;
             background: #fff; transition: border-color 0.15s, box-shadow 0.15s;
@@ -160,7 +171,6 @@
         }
         input:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
 
-        /* TABELAS */
         table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left; padding: 10px 14px; font-size: 11px;
@@ -175,7 +185,6 @@
         tr:hover td { background: #fafafa; }
         .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #f3f4f6; }
 
-        /* BADGES */
         .badge {
             display: inline-flex; align-items: center; padding: 3px 10px;
             border-radius: 20px; font-size: 11px; font-weight: 500;
@@ -185,7 +194,6 @@
         .badge-vermelho { background: #fee2e2; color: #991b1b; }
         .badge-azul { background: #dbeafe; color: #1e40af; }
 
-        /* STATUS PAGAMENTO */
         .btn-pago {
             display: inline-flex; align-items: center; gap: 6px;
             background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;
@@ -203,7 +211,6 @@
         }
         .btn-aberto:hover { background: #fef08a; }
 
-        /* MODAL */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 999;
@@ -221,7 +228,6 @@
         .field input, .field select { width: 100%; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-        /* RESPONSIVO */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); width: 260px; }
             .sidebar.aberto { transform: translateX(0); }
@@ -295,6 +301,22 @@
     <a href="/importar" class="{{ 'ativo' if request.path == '/importar' }}" onclick="fecharMenu()">
         <span class="dot"></span> Importar Excel
     </a>
+    {% if current_user.is_authenticated and current_user.admin %}
+    <a href="/admin" class="{{ 'ativo' if request.path == '/admin' }}" onclick="fecharMenu()">
+        <span class="dot"></span> Admin
+    </a>
+    {% endif %}
+    <div class="sidebar-footer">
+        {% if current_user.is_authenticated %}
+        <div class="user-info">
+            <strong>{{ current_user.nome }}</strong>
+            {{ current_user.email }}
+        </div>
+        {% endif %}
+        <a href="/logout" class="btn-sair">
+            <span class="dot"></span> Sair
+        </a>
+    </div>
 </div>
 
 <div class="conteudo">

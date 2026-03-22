@@ -1,9 +1,21 @@
 from datetime import datetime
 from database import db
+from flask_login import UserMixin
+
+class Usuario(UserMixin, db.Model):
+    __tablename__ = 'usuario'
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    senha = db.Column(db.String(200), nullable=False)
+    admin = db.Column(db.Boolean, default=False)
+    ativo = db.Column(db.Boolean, default=True)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
 class ReceitaPessoal(db.Model):
     __tablename__ = 'receita_pessoal'
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     descricao = db.Column(db.String(100), nullable=False)
     valor = db.Column(db.Float, nullable=False)
     fixa = db.Column(db.Boolean, default=True)
@@ -12,6 +24,7 @@ class ReceitaPessoal(db.Model):
 class Cliente(db.Model):
     __tablename__ = 'cliente'
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     nome = db.Column(db.String(100), nullable=False)
     valor_mensalidade = db.Column(db.Float, nullable=False)
     dia_vencimento = db.Column(db.Integer, nullable=False)
@@ -21,6 +34,7 @@ class Cliente(db.Model):
 class DespesaFixa(db.Model):
     __tablename__ = 'despesa_fixa'
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     descricao = db.Column(db.String(100), nullable=False)
     valor = db.Column(db.Float, nullable=False)
     ativa = db.Column(db.Boolean, default=True)
@@ -37,6 +51,7 @@ class HistoricoReajuste(db.Model):
 class DespesaVariavel(db.Model):
     __tablename__ = 'despesa_variavel'
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     descricao = db.Column(db.String(100), nullable=False)
     cor = db.Column(db.String(20), default='#f1efe8')
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
@@ -50,10 +65,10 @@ class LancamentoDespesaVariavel(db.Model):
     valor = db.Column(db.Float, nullable=False)
     pago = db.Column(db.Boolean, default=False)
 
-
 class CompraParcelada(db.Model):
     __tablename__ = 'compra_parcelada'
     id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
     descricao = db.Column(db.String(100), nullable=False)
     valor_parcela = db.Column(db.Float, nullable=False)
     num_parcelas = db.Column(db.Integer, nullable=False)
