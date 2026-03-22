@@ -596,28 +596,28 @@ def importar():
     db.session.commit()
     return render_template('importar.html', resultado=resultado)
 
-@app.route('/recreate-db-xyz123')
-def recreate_db():
-    db.drop_all()
-    db.create_all()
-    return 'Banco recriado!'
+#@app.route('/recreate-db-xyz123')
+#def recreate_db():
+#    db.drop_all()
+#    db.create_all()
+#    return 'Banco recriado!'
 
-@app.route('/admin-setup-xyz123')
-def admin_setup():
-    usuarios = Usuario.query.all()
-    resultado = '<h2>Usuários:</h2>'
-    for u in usuarios:
-        resultado += f'<p>ID: {u.id} | Email: {u.email} | Admin: {u.admin}</p>'
-    return resultado
+#@app.route('/admin-setup-xyz123')
+#def admin_setup():
+#    usuarios = Usuario.query.all()
+#    resultado = '<h2>Usuários:</h2>'
+#    for u in usuarios:
+#        resultado += f'<p>ID: {u.id} | Email: {u.email} | Admin: {u.admin}</p>'
+#    return resultado
 
-@app.route('/admin-set-xyz123/<email>')
-def admin_set(email):
-    u = Usuario.query.filter_by(email=email).first()
-    if u:
-        u.admin = True
-        db.session.commit()
-        return f'Admin definido para {u.email}!'
-    return 'Usuário não encontrado.'
+@#app.route('/admin-set-xyz123/<email>')
+#def admin_set(email):
+ #   u = Usuario.query.filter_by(email=email).first()
+  #  if u:
+   #     u.admin = True
+    #    db.session.commit()
+     #   return f'Admin definido para {u.email}!'
+    #return 'Usuário não encontrado.'
 
 if __name__ == '__main__':
     with app.app_context():
