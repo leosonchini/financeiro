@@ -610,7 +610,7 @@ def importar():
 #        resultado += f'<p>ID: {u.id} | Email: {u.email} | Admin: {u.admin}</p>'
 #    return resultado
 
-@#app.route('/admin-set-xyz123/<email>')
+#@app.route('/admin-set-xyz123/<email>')
 #def admin_set(email):
  #   u = Usuario.query.filter_by(email=email).first()
   #  if u:
