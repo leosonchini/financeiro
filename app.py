@@ -596,6 +596,12 @@ def importar():
     db.session.commit()
     return render_template('importar.html', resultado=resultado)
 
+@app.route('/recreate-db-xyz123')
+def recreate_db():
+    db.drop_all()
+    db.create_all()
+    return 'Banco recriado!'
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
