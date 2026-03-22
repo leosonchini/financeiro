@@ -95,7 +95,7 @@ def logout():
 @login_required
 def admin():
     if not current_user.admin:
-        return redirect(url_for('painel'))
+        return f"Acesso negado. Seu admin é: {current_user.admin} | Email: {current_user.email}"
     usuarios = Usuario.query.order_by(Usuario.criado_em.desc()).all()
     for u in usuarios:
         u.total_clientes = Cliente.query.filter_by(usuario_id=u.id).count()
