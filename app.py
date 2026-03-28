@@ -596,15 +596,6 @@ def importar():
     db.session.commit()
     return render_template('importar.html', resultado=resultado)
 
-@app.route('/migrate-xyz123')
-def migrate():
-    with db.engine.connect() as conn:
-        try:
-            conn.execute(db.text('ALTER TABLE despesa_fixa ADD COLUMN dia_vencimento INTEGER'))
-            conn.commit()
-            return 'Migração concluída!'
-        except Exception as e:
-            return f'Erro (pode já existir): {str(e)}'
 
 #@app.route('/recreate-db-xyz123')
 #def recreate_db():
