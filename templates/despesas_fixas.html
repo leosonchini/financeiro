@@ -16,6 +16,10 @@
             <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Valor (R$)</label>
             <input type="number" name="valor" placeholder="0,00" required step="0.01" style="width: 100%;">
         </div>
+        <div style="min-width: 100px;">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px;">Dia vencimento</label>
+            <input type="number" name="dia_vencimento" placeholder="Ex: 10" min="1" max="31" style="width: 100%;">
+        </div>
         <button type="submit" class="btn btn-primary">+ Adicionar</button>
     </form>
 </div>
@@ -29,6 +33,7 @@
                 <tr>
                     <th>Descrição</th>
                     <th>Valor</th>
+                    <th>Vencimento</th>
                     <th style="text-align: center;">Pagamento do mês</th>
                     <th style="text-align: center;">Ações</th>
                 </tr>
@@ -38,6 +43,13 @@
                 <tr style="{{ 'background: #f0fdf4;' if despesa.pagamento_mes else '' }}">
                     <td style="font-weight: 500; color: #111827;">{{ despesa.descricao }}</td>
                     <td class="vm" style="font-weight: 600; color: #dc2626;">{{ despesa.valor|moeda }}</td>
+                    <td style="color: #6b7280;">
+                        {% if despesa.dia_vencimento %}
+                            Dia {{ despesa.dia_vencimento }}
+                        {% else %}
+                            <span style="color: #d1d5db;">—</span>
+                        {% endif %}
+                    </td>
                     <td style="text-align: center;">
                         <form method="POST" action="/despesas-fixas/pagar/{{ despesa.id }}">
                             {% if despesa.pagamento_mes %}
@@ -53,7 +65,7 @@
                     </td>
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }})"
+                            <button onclick="abrirEdicao({{ despesa.id }}, '{{ despesa.descricao }}', {{ despesa.valor }}, {{ despesa.dia_vencimento or 0 }})"
                                 class="btn btn-secondary" style="padding: 5px 12px; font-size: 12px;">
                                 Editar
                             </button>
@@ -87,6 +99,10 @@
                 <label>Valor (R$)</label>
                 <input type="number" name="valor" id="edit-valor" required step="0.01">
             </div>
+            <div class="field">
+                <label>Dia vencimento</label>
+                <input type="number" name="dia_vencimento" id="edit-dia" min="1" max="31" placeholder="Ex: 10">
+            </div>
             <div class="modal-actions">
                 <button type="button" onclick="fecharEdicao()" class="btn btn-secondary">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Salvar</button>
@@ -96,9 +112,10 @@
 </div>
 
 <script>
-function abrirEdicao(id, descricao, valor) {
+function abrirEdicao(id, descricao, valor, dia) {
     document.getElementById('edit-descricao').value = descricao;
     document.getElementById('edit-valor').value = valor;
+    document.getElementById('edit-dia').value = dia || '';
     document.getElementById('form-edicao').action = '/despesas-fixas/editar/' + id;
     document.getElementById('modal-edicao').style.display = 'flex';
 }

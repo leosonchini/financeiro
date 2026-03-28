@@ -245,7 +245,8 @@ def despesas_fixas():
 def nova_despesa_fixa():
     descricao = request.form['descricao']
     valor = float(request.form['valor'])
-    despesa = DespesaFixa(descricao=descricao, valor=valor, usuario_id=current_user.id)
+    dia_vencimento = int(request.form['dia_vencimento']) if request.form.get('dia_vencimento') else None
+    despesa = DespesaFixa(descricao=descricao, valor=valor, dia_vencimento=dia_vencimento, usuario_id=current_user.id)
     db.session.add(despesa)
     db.session.commit()
     return redirect(url_for('despesas_fixas'))
@@ -276,6 +277,7 @@ def editar_despesa_fixa(id):
         db.session.add(historico)
         despesa.valor = novo_valor
     despesa.descricao = request.form['descricao']
+    despesa.dia_vencimento = int(request.form['dia_vencimento']) if request.form.get('dia_vencimento') else None
     db.session.commit()
     return redirect(url_for('despesas_fixas'))
 
